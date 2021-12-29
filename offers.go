@@ -28,6 +28,7 @@ func (c *client) OfferRequest(ctx context.Context, requestInput *OfferRequestInp
 			u.RawQuery = q.Encode()
 		}
 	})
+
 	if err != nil {
 		return nil, err
 	}

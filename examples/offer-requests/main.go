@@ -38,5 +38,15 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	log.Println(offers)
+	for _, offer := range offers.Offers {
+		log.Println("Passengers:")
+		for _, p := range offer.Passengers {
+			log.Printf("- %s %s (%s)\n", p.GivenName, p.FamilyName, p.Type)
+		}
+
+		log.Printf("Flights $%1.2f", offer.TaxAmount)
+		for _, s := range offer.Slices {
+			log.Printf("- %s to %s on %s\n", *s.Origin.CityName, *s.Destination.CityName, time.Time(s.DepartureDate).Format("Mon Jan 2 15:04"))
+		}
+	}
 }

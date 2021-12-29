@@ -33,8 +33,14 @@ type (
 	}
 
 	Offer struct {
-		Slices     []Slice     `json:"slices"`
-		Passengers []Passenger `json:"passengers"`
+		Slices           []Slice     `json:"slices"`
+		Passengers       []Passenger `json:"passengers"`
+		UpdatedAt        time.Time   `json:"updated_at"`
+		TotalEmissionsKg float64     `json:"total_emissions_kg"`
+		TotalCurrency    string      `json:"total_currency"`
+		TotalAmount      float64     `json:"total_amount"`
+		TaxCurrency      string      `json:"tax_currency"`
+		TaxAmount        float64     `json:"tax_amount"`
 	}
 
 	Slice struct {
@@ -44,10 +50,49 @@ type (
 		Destination     Location  `json:"destination"`
 		DepartureDate   Date      `json:"departure_date,omitempty"`
 		CreatedAt       time.Time `json:"created_at,omitempty"`
-		Segments        []Segment `json:"segments,omitempty"`
+		Segments        []Flight  `json:"segments,omitempty"`
 	}
 
-	Segment struct {
+	Flight struct {
+		Passengers                   []SegmentPassenger `json:"passengers"`
+		Origin                       Location           `json:"origin"`
+		OriginTerminal               string             `json:"origin_terminal"`
+		OperatingCarrierFlightNumber string             `json:"operating_carrier_flight_number"`
+		OperatingCarrier             Airline            `json:"operating_carrier"`
+		MarketingCarrierFlightNumber string             `json:"marketing_carrier_flight_number"`
+		MarketingCarrier             Airline            `json:"marketing_carrier"`
+		Duration                     time.Duration      `json:"duration"`
+		Distance                     float64            `json:"distance, omitempty"`
+		DestinationTerminal          string             `json:"destination_terminal"`
+		Destination                  Location           `json:"destination"`
+		DepartingAt                  time.Time          `json:"departing_at"`
+		ArrivingAt                   time.Time          `json:"arriving_at"`
+		Aircraft                     Equipment          `json:"aircraft"`
+	}
+
+	SegmentPassenger struct {
+		ID                      string     `json:"id"`
+		FareBasisCode           string     `json:"fare_basis_code"`
+		CabinClassMarketingName string     `json:"cabin_class_marketing_name"`
+		CabinClass              CabinClass `json:"cabin_class"`
+		Baggages                []Baggage  `json:"baggages"`
+	}
+
+	Equipment struct {
+		IATACode string `json:"iata_code"`
+		ID       string `json:"id"`
+		Name     string `json:"name"`
+	}
+
+	Airline struct {
+		Name     string `json:"name"`
+		IATACode string `json:"iata_code"`
+		ID       string `json:"id"`
+	}
+
+	Baggage struct {
+		Quantity int    `json:"quantity"`
+		Type     string `json:"type"`
 	}
 
 	Location struct {
@@ -133,3 +178,7 @@ func New(apiToken string, opts ...Option) Duffel {
 var (
 	_ Duffel = (*client)(nil)
 )
+
+func (p PassengerType) String() string {
+	return string(p)
+}

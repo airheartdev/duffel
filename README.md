@@ -8,6 +8,10 @@ A Go (golang) client library for the [Duffel](https://duffel.com) API implemente
 go get github.com/airheartdev/duffel
 ```
 
+## Usage examples
+
+See the [examples/\*](/examples/) directory
+
 ## Implementation status:
 
 To maintain simplicity and ease of use, this client library is hand-coded (instead of using Postman to Go code generation) and contributions are greatly apprecicated.

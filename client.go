@@ -2,6 +2,7 @@ package duffel
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -14,24 +15,30 @@ type Payload[T any] struct {
 	Data T `json:"data"`
 }
 
-type RequestOption func(req *http.Request, u *url.URL)
+type ResponsePayload[T any] struct {
+	Meta *ListMeta `json:"meta"`
+	Data T         `json:"data"`
+}
 
-func buildPayload[T any](data T) *Payload[T] {
+type RequestOption func(req *http.Request)
+
+func buildRequestPayload[T any](data T) *Payload[T] {
 	return &Payload[T]{
 		Data: data,
 	}
 }
 
-func encodePayload[T any](requestInput T) (*bytes.Buffer, error) {
+func encodePayload[T any](requestInput T) (io.ReadCloser, error) {
 	payload := bytes.NewBuffer(nil)
-	err := json.NewEncoder(payload).Encode(buildPayload(requestInput))
+	err := json.NewEncoder(payload).Encode(buildRequestPayload(requestInput))
 	if err != nil {
 		return nil, err
 	}
-	return payload, nil
+
+	return io.NopCloser(payload), nil
 }
 
-func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, method string, body io.Reader, opts ...RequestOption) (*http.Response, error) {
+func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, method string, body io.ReadCloser, opts ...RequestOption) (*http.Response, error) {
 	if c.APIToken == "" {
 		return nil, fmt.Errorf("duffel: missing API token")
 	}
@@ -41,17 +48,23 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, u.String(), body)
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
+	if method != http.MethodGet {
+		req.Body = body
+	}
+
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Accept-Encoding", "gzip")
 	req.Header.Add("User-Agent", c.options.UserAgent)
 	req.Header.Add("Duffel-Version", c.options.Version)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.APIToken))
 	for _, o := range opts {
-		o(req, u)
+		o(req)
 	}
 
 	resp, err := c.httpDoer.Do(req)
@@ -60,14 +73,12 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 	}
 
 	if resp.StatusCode > 499 {
-		return nil, fmt.Errorf("request failed with HTTP status: %s url=%s", resp.Status, req.URL.String())
+		// return nil, fmt.Errorf("request failed with HTTP status: %s url=%s", resp.Status, req.URL.String())
+		err = decodeError(resp)
+		return nil, err
 	} else if resp.StatusCode > 399 {
-		derr := &DuffelError{}
-		err := json.NewDecoder(resp.Body).Decode(derr)
-		if err != nil {
-			return nil, err
-		}
-		return nil, derr
+		err = decodeError(resp)
+		return nil, err
 	}
 
 	return resp, nil
@@ -82,4 +93,32 @@ func (c *client[R, T]) buildRequestURL(resourceName string) (*url.URL, error) {
 	u.Path = resourceName
 
 	return u, nil
+}
+
+func decodeResponse(response *http.Response) (io.ReadCloser, error) {
+	var reader io.ReadCloser
+	var err error
+	if response.Header.Get("Content-Encoding") == "gzip" {
+		reader, err = gzip.NewReader(response.Body)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		reader = response.Body
+	}
+	return reader, nil
+}
+
+func decodeError(response *http.Response) error {
+	reader, err := decodeResponse(response)
+	if err != nil {
+		return err
+	}
+
+	derr := &DuffelError{}
+	err = json.NewDecoder(reader).Decode(derr)
+	if err != nil {
+		return err
+	}
+	return derr
 }

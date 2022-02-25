@@ -1,0 +1,42 @@
+name: Continuous Integration
+on:
+  push:
+
+jobs:
+  tests:
+    name: "Run Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Task
+        uses: arduino/setup-task@v1
+
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          stable: "false"
+          go-version: 1.18.0-rc1
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install Dependencies
+        run: go mod download
+        working-directory: ./
+
+      - name: Go Vet
+        run: go vet ./...
+        working-directory: ./
+
+      - name: Run tests
+        run: go test -v -tags test -failfast ./...
+        working-directory: ./
+        env:
+          DUFFEL_TOKEN: duffel_test_123

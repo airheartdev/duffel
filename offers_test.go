@@ -9,9 +9,10 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestOffersRequest(t *testing.T) {
+func TestCreateOffersRequest(t *testing.T) {
 	a := assert.New(t)
-	gock.New("https://api.duffel.com/air/offer_requests").
+	gock.New("https://api.duffel.com").
+		Post("/air/offer_requests").
 		Reply(200).
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
@@ -25,7 +26,6 @@ func TestOffersRequest(t *testing.T) {
 	age := 30
 
 	client := New("duffel_test_123")
-	// client := &internalClient[OfferRequestInput, OfferResponse]{client: c}
 	data, err := client.CreateOfferRequest(ctx, &OfferRequestInput{
 		Passengers: []Passenger{
 			{
@@ -49,6 +49,29 @@ func TestOffersRequest(t *testing.T) {
 	a.NoError(err)
 	a.NotNil(data)
 
+	a.Equal("1390.66", data.Offers[0].TotalAmount)
+	a.Equal("GBP", data.Offers[0].TotalCurrency)
+	a.Equal("GBP", data.Offers[0].TaxCurrency)
+	a.Equal("116.08", data.Offers[0].TaxAmount)
+}
+
+func TestGetOfferRequest(t *testing.T) {
+	a := assert.New(t)
+	gock.New("https://api.duffel.com").
+		Get("/air/offer_requests/orq_0000AEtEexyvXbB0OhB5jk").
+		Reply(200).
+		SetHeader("Ratelimit-Limit", "5").
+		SetHeader("Ratelimit-Remaining", "5").
+		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
+		SetHeader("Date", time.Now().Format(time.RFC1123)).
+		File("fixtures/200-offer-response.json")
+
+	ctx := context.TODO()
+
+	client := New("duffel_test_123")
+	data, err := client.GetOfferRequest(ctx, "orq_0000AEtEexyvXbB0OhB5jk")
+	a.NoError(err)
+	a.NotNil(data)
 	a.Equal("1390.66", data.Offers[0].TotalAmount)
 	a.Equal("GBP", data.Offers[0].TotalCurrency)
 	a.Equal("GBP", data.Offers[0].TaxCurrency)

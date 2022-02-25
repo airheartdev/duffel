@@ -23,8 +23,8 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [x] Most API types
 - [x] API Client
 - [x] Error handling
-- [x] Pagination (using iterators)
-- [x] Rate Limiting
+- [x] Pagination _(using iterators)_
+- [x] Rate Limiting _(automatically throttles requests to stay under limit)_
 - [x] Offer Requests
   - [x] Create offer request and return offer
   - [x] Get offer by ID

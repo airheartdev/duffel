@@ -33,6 +33,10 @@ type (
 		Offers     []Offer     `json:"offers"`
 		Slices     []Slice     `json:"slices"`
 		Passengers []Passenger `json:"passengers"`
+		LiveMode   bool        `json:"live_mode"`
+		ID         string      `json:"id"`
+		CreatedAt  time.Time   `json:"created_at"`
+		CabinClass CabinClass  `json:"cabin_class"`
 	}
 
 	Offer struct {

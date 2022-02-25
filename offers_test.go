@@ -13,6 +13,10 @@ func TestOffersRequest(t *testing.T) {
 	a := assert.New(t)
 	gock.New("https://api.duffel.com/air/offer_requests").
 		Reply(200).
+		SetHeader("Ratelimit-Limit", "5").
+		SetHeader("Ratelimit-Remaining", "5").
+		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
+		SetHeader("Date", time.Now().Format(time.RFC1123)).
 		File("fixtures/200-offer-response.json")
 
 	ctx := context.TODO()
@@ -22,7 +26,7 @@ func TestOffersRequest(t *testing.T) {
 
 	client := New("duffel_test_123")
 	// client := &internalClient[OfferRequestInput, OfferResponse]{client: c}
-	data, err := client.OfferRequest(ctx, &OfferRequestInput{
+	data, err := client.CreateOfferRequest(ctx, &OfferRequestInput{
 		Passengers: []Passenger{
 			{
 				ID:         "1",

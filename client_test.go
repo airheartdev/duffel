@@ -14,9 +14,10 @@ func TestClientError(t *testing.T) {
 	gock.New("https://api.duffel.com/air/offer_requests").
 		Reply(400).
 		File("fixtures/400-bad-request.json")
+	defer gock.Off()
 
 	client := New("duffel_test_123")
-	data, err := client.OfferRequest(ctx, nil)
+	data, err := client.CreateOfferRequest(ctx, nil)
 	a.Error(err)
 	a.Nil(data)
 

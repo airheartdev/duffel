@@ -26,6 +26,9 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [x] Pagination (using iterators)
 - [x] Rate Limiting
 - [x] Offer Requests
+      [x] Create offer request and return offer
+      [x] Get offer by ID
+      [x] List all offers
 - [x] Offers
 - [ ] Orders
 - [ ] Payments

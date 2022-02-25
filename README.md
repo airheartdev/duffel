@@ -2,6 +2,8 @@
 
 A Go (golang) client library for the [Duffel](https://duffel.com) API implemented by the Airheart team.
 
+[![Tests](https://github.com/airheartdev/duffel/actions/workflows/ci.yaml/badge.svg)](https://github.com/airheartdev/duffel/actions/workflows/ci.yaml)
+
 ## Installation
 
 ```shell

@@ -1,13 +1,10 @@
 package duffel
 
 import (
-	"compress/gzip"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
@@ -19,7 +16,7 @@ func newInternalClient[T any, R any](a *API) *client[T, R] {
 		httpDoer: a.httpDoer,
 		options:  a.options,
 		APIToken: a.APIToken,
-		rl:       rate.NewLimiter(rate.Every(1*time.Second), 5),
+		limiter:  rate.NewLimiter(rate.Every(1*time.Second), 5),
 	}
 }
 
@@ -39,7 +36,7 @@ func (c *client[Req, Resp]) makeIteratorRequest(ctx context.Context, resourceNam
 		return nil, err
 	}
 
-	err = c.rl.Wait(ctx) // This is a blocking call. Honors the rate limit
+	err = c.limiter.Wait(ctx) // This is a blocking call. Honors the rate limit
 	if err != nil {
 		return nil, err
 	}
@@ -49,41 +46,24 @@ func (c *client[Req, Resp]) makeIteratorRequest(ctx context.Context, resourceNam
 		return nil, err
 	}
 
-	var reader io.ReadCloser
-	if resp.Header.Get("Content-Encoding") == "gzip" {
-		reader, err = gzip.NewReader(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-		defer reader.Close()
-	} else {
-		reader = resp.Body
-	}
-
-	c.limit, err = strconv.Atoi(resp.Header.Get("Ratelimit-Limit"))
-	if err != nil {
-		return nil, err
-	}
-	c.limitRemaining, err = strconv.Atoi(resp.Header.Get("Ratelimit-Remaining"))
-	if err != nil {
-		return nil, err
-	}
-	c.limitReset, err = time.Parse(time.RFC1123, resp.Header.Get("Ratelimit-Reset"))
-	if err != nil {
-		return nil, err
-	}
-	timestamp, err := time.Parse(time.RFC1123, resp.Header.Get("Date"))
+	rateLimit, err := parseRateLimit(resp)
 	if err != nil {
 		return nil, err
 	}
 
-	period := c.limitReset.Sub(timestamp)
-	c.rl.SetBurst(c.limit)
-	c.rl.SetLimit(rate.Every(period))
+	c.rateLimit = rateLimit
+	c.limiter.SetBurst(rateLimit.Limit)
+	c.limiter.SetLimit(rate.Every(rateLimit.Period))
 
-	if c.limitRemaining == 0 || resp.StatusCode == http.StatusTooManyRequests {
-		return nil, fmt.Errorf("rate limit exceeded, reset in: %s, current limit: %d", period.String(), c.limit)
+	if rateLimit.Remaining == 0 || resp.StatusCode == http.StatusTooManyRequests {
+		return nil, fmt.Errorf("rate limit exceeded, reset in: %s, current limit: %d", rateLimit.Period.String(), rateLimit.Limit)
 	}
+
+	reader, err := decodeResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
 
 	container := new(ResponsePayload[Resp])
 	err = json.NewDecoder(reader).Decode(&container)

@@ -155,13 +155,11 @@ type (
 	}
 
 	client[Req any, Resp any] struct {
-		httpDoer       *http.Client
-		APIToken       string
-		options        *Options
-		rl             *rate.Limiter
-		limit          int
-		limitRemaining int
-		limitReset     time.Time
+		httpDoer  *http.Client
+		APIToken  string
+		options   *Options
+		limiter   *rate.Limiter
+		rateLimit *RateLimit
 	}
 
 	API struct {

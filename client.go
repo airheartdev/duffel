@@ -1,6 +1,7 @@
 package duffel
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -9,21 +10,28 @@ import (
 	"net/url"
 )
 
-type RequestPayload struct {
-	Data interface{} `json:"data"`
+type Payload[T any] struct {
+	Data T `json:"data"`
 }
 
 type RequestOption func(req *http.Request, u *url.URL)
 
-func buildRequestPayload(data interface{}) *RequestPayload {
-	payload := &RequestPayload{
+func buildPayload[T any](data T) *Payload[T] {
+	return &Payload[T]{
 		Data: data,
 	}
-
-	return payload
 }
 
-func (c *client) makeRequest(ctx context.Context, resourceName string, method string, body io.Reader, opts ...RequestOption) (*http.Response, error) {
+func encodePayload[T any](requestInput T) (*bytes.Buffer, error) {
+	payload := bytes.NewBuffer(nil)
+	err := json.NewEncoder(payload).Encode(buildPayload(requestInput))
+	if err != nil {
+		return nil, err
+	}
+	return payload, nil
+}
+
+func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, method string, body io.Reader, opts ...RequestOption) (*http.Response, error) {
 	if c.APIToken == "" {
 		return nil, fmt.Errorf("duffel: missing API token")
 	}
@@ -59,14 +67,13 @@ func (c *client) makeRequest(ctx context.Context, resourceName string, method st
 		if err != nil {
 			return nil, err
 		}
-		err = buildError(derr.Errors[0])
-		return nil, err
+		return nil, derr
 	}
 
 	return resp, nil
 }
 
-func (c *client) buildRequestURL(resourceName string) (*url.URL, error) {
+func (c *client[R, T]) buildRequestURL(resourceName string) (*url.URL, error) {
 	u, err := url.Parse(c.options.Host)
 
 	if err != nil {

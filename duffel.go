@@ -36,11 +36,11 @@ type (
 		Slices           []Slice     `json:"slices"`
 		Passengers       []Passenger `json:"passengers"`
 		UpdatedAt        time.Time   `json:"updated_at"`
-		TotalEmissionsKg float64     `json:"total_emissions_kg"`
+		TotalEmissionsKg string      `json:"total_emissions_kg"`
 		TotalCurrency    string      `json:"total_currency"`
-		TotalAmount      float64     `json:"total_amount"`
+		TotalAmount      string      `json:"total_amount"`
 		TaxCurrency      string      `json:"tax_currency"`
-		TaxAmount        float64     `json:"tax_amount"`
+		TaxAmount        string      `json:"tax_amount"`
 	}
 
 	Slice struct {
@@ -61,12 +61,12 @@ type (
 		OperatingCarrier             Airline            `json:"operating_carrier"`
 		MarketingCarrierFlightNumber string             `json:"marketing_carrier_flight_number"`
 		MarketingCarrier             Airline            `json:"marketing_carrier"`
-		Duration                     time.Duration      `json:"duration"`
-		Distance                     float64            `json:"distance, omitempty"`
+		Duration                     Duration           `json:"duration"`
+		Distance                     Distance           `json:"distance,omitempty"`
 		DestinationTerminal          string             `json:"destination_terminal"`
 		Destination                  Location           `json:"destination"`
-		DepartingAt                  time.Time          `json:"departing_at"`
-		ArrivingAt                   time.Time          `json:"arriving_at"`
+		DepartingAt                  DateTime           `json:"departing_at"`
+		ArrivingAt                   DateTime           `json:"arriving_at"`
 		Aircraft                     Equipment          `json:"aircraft"`
 	}
 
@@ -138,7 +138,13 @@ type (
 		HttpDoer  *http.Client
 	}
 
-	client struct {
+	client[Req any, Resp any] struct {
+		httpDoer *http.Client
+		APIToken string
+		options  *Options
+	}
+
+	API struct {
 		httpDoer *http.Client
 		APIToken string
 		options  *Options
@@ -166,17 +172,17 @@ func New(apiToken string, opts ...Option) Duffel {
 	for _, opt := range opts {
 		opt(options)
 	}
-	c := &client{
+
+	return &API{
 		httpDoer: options.HttpDoer,
 		APIToken: apiToken,
 		options:  options,
 	}
-	return c
 }
 
 // Assert that our interface matches
 var (
-	_ Duffel = (*client)(nil)
+	_ Duffel = (*API)(nil)
 )
 
 func (p PassengerType) String() string {

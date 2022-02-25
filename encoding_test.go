@@ -29,3 +29,33 @@ func Test_MarshallingDate(t *testing.T) {
 	a.NoError(err)
 	a.Equal(testDate, unmarshalled.DepartureDate)
 }
+
+func TestDateTime(t *testing.T) {
+	tz, _ := time.LoadLocation("Asia/Bangkok")
+	tests := []struct {
+		Input    string
+		Expected time.Time
+	}{
+		{Input: "{\"date_time\": \"2022-02-22T12:01:00Z\"}", Expected: time.Date(2022, 2, 22, 12, 1, 0, 0, time.UTC)},
+		{Input: "{\"date_time\": \"2022-02-22T12:01:00+07:00\"}", Expected: time.Date(2022, 2, 22, 12, 1, 0, 0, tz)},
+		{Input: "{\"date_time\": \"2022-02-22T12:01:00\"}", Expected: time.Date(2022, 2, 22, 12, 1, 0, 0, time.UTC)},
+	}
+
+	type container struct {
+		DateTime DateTime `json:"date_time"`
+	}
+
+	for _, test := range tests {
+		d := new(container)
+		err := json.Unmarshal([]byte(test.Input), d)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		actual := time.Time(d.DateTime)
+
+		if actual.Unix() != test.Expected.Unix() {
+			t.Errorf("%s: expected %s, got %s", test.Input, test.Expected, actual)
+		}
+	}
+}

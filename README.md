@@ -6,6 +6,8 @@ A Go (golang) client library for the [Duffel](https://duffel.com) API implemente
 
 ## Installation
 
+**Requires at least Go 1.18-rc1 since we use generics on the internal API client**
+
 ```shell
 go get github.com/airheartdev/duffel
 ```

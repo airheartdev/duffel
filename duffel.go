@@ -3,6 +3,8 @@ package duffel
 import (
 	"net/http"
 	"time"
+
+	"golang.org/x/time/rate"
 )
 
 const userAgentString = "duffel-go/1.0"
@@ -11,6 +13,7 @@ const defaultHost = "https://api.duffel.com/"
 type (
 	Duffel interface {
 		OfferRequestClient
+		AirportsClient
 	}
 
 	OfferRequestInput struct {
@@ -90,6 +93,19 @@ type (
 		ID       string `json:"id"`
 	}
 
+	Airport struct {
+		ID              string   `json:"id"`
+		Name            string   `json:"name"`
+		City            Location `json:"city"`
+		CityName        string   `json:"city_name"`
+		IATACode        string   `json:"iata_code"`
+		IATACountryCode string   `json:"iata_country_code"`
+		ICAOCode        string   `json:"icao_code"`
+		Latitude        float32  `json:"latitude"`
+		Longitude       float32  `json:"longitude"`
+		TimeZone        string   `json:"time_zone"`
+	}
+
 	Baggage struct {
 		Quantity int    `json:"quantity"`
 		Type     string `json:"type"`
@@ -98,8 +114,8 @@ type (
 	Location struct {
 		ID              string     `json:"id"`
 		Type            string     `json:"type"`
-		TimeZone        string     `json:"time_zone"`
 		Name            string     `json:"name"`
+		TimeZone        string     `json:"time_zone,omitempty"`
 		Longitude       *float64   `json:"longitude,omitempty"`
 		Latitude        *float64   `json:"latitude,omitempty"`
 		ICAOCode        *string    `json:"icao_code,omitempty"`
@@ -139,9 +155,13 @@ type (
 	}
 
 	client[Req any, Resp any] struct {
-		httpDoer *http.Client
-		APIToken string
-		options  *Options
+		httpDoer       *http.Client
+		APIToken       string
+		options        *Options
+		rl             *rate.Limiter
+		limit          int
+		limitRemaining int
+		limitReset     time.Time
 	}
 
 	API struct {

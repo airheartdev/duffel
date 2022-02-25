@@ -19,9 +19,10 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [x] Most API types
 - [x] API Client
 - [x] Error handling
-- [ ] Pagination
+- [x] Pagination (using iterators)
+- [x] Rate Limiting
 - [x] Offer Requests
-- [ ] Offers
+- [x] Offers
 - [ ] Orders
 - [ ] Payments
 - [ ] Seat Maps

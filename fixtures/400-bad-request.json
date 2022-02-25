@@ -1,0 +1,15 @@
+{
+  "errors": [
+    {
+      "code": "airline_unknown",
+      "documentation_url": "https://duffel.com/docs/api/overview/errors",
+      "message": "The airline responded with an unexpected error, please contact support",
+      "title": "Airline Error",
+      "type": "airline_error"
+    }
+  ],
+  "meta": {
+    "request_id": "FZW0H3HdJwKk5HMAAKxB",
+    "status": 400
+  }
+}

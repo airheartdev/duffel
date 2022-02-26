@@ -34,13 +34,13 @@ type ListMeta struct {
 	// HasMore is a boolean that indicates whether there are more items
 
 	// After is a string that contains the token for the next page of results
-	After string `json:"after"`
+	After string `json:"after" url:"after,omitempty"`
 
 	// Before is a string that contains the token for the previous page of results
-	Before string `json:"before"`
+	Before string `json:"before" url:"-"`
 
 	// Limit is a number that indicates the maximum number of items to return
-	Limit int `json:"limit"`
+	Limit int `json:"limit" url:"limit,omitempty"`
 }
 
 func (l *ListMeta) HasMore() bool {

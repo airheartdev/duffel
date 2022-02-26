@@ -75,7 +75,6 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 	}
 
 	if resp.StatusCode > 499 {
-		// return nil, fmt.Errorf("request failed with HTTP status: %s url=%s", resp.Status, req.URL.String())
 		err = decodeError(resp)
 		return nil, err
 	} else if resp.StatusCode > 399 {

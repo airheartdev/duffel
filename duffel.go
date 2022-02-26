@@ -13,6 +13,7 @@ const defaultHost = "https://api.duffel.com/"
 type (
 	Duffel interface {
 		OfferRequestClient
+		OfferClient
 		AirportsClient
 	}
 

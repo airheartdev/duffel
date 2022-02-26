@@ -12,7 +12,7 @@ import (
 func main() {
 	ctx := context.Background()
 	client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
-	iter := client.ListAirports(ctx, &duffel.ListAirportsRequest{
+	iter := client.ListAirports(ctx, duffel.ListAirportsParams{
 		IATACountryCode: "AU",
 	})
 

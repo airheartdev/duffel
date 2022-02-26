@@ -153,3 +153,11 @@ func WithURLParams[T any](params ...T) func(req *http.Request) {
 		req.URL.RawQuery = q.Encode()
 	}
 }
+
+func WithURLParam(key, value string) func(req *http.Request) {
+	return func(req *http.Request) {
+		q := req.URL.Query()
+		q.Add(key, value)
+		req.URL.RawQuery = q.Encode()
+	}
+}

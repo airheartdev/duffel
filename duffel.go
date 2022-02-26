@@ -29,12 +29,12 @@ type (
 		Origin        string `json:"origin"`
 	}
 
-	OfferResponse struct {
+	OfferRequest struct {
+		ID         string      `json:"id"`
+		LiveMode   bool        `json:"live_mode"`
 		Offers     []Offer     `json:"offers"`
 		Slices     []Slice     `json:"slices"`
 		Passengers []Passenger `json:"passengers"`
-		LiveMode   bool        `json:"live_mode"`
-		ID         string      `json:"id"`
 		CreatedAt  time.Time   `json:"created_at"`
 		CabinClass CabinClass  `json:"cabin_class"`
 	}
@@ -140,8 +140,15 @@ type (
 		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
 	}
 
+	PassengerUpdateInput struct {
+		FamilyName               string                    `json:"family_name"`
+		GivenName                string                    `json:"given_name"`
+		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
+	}
+
 	LoyaltyProgrammeAccount struct {
-		IATACode string `json:"iata_code"`
+		AirlineIATACode string `json:"airline_iata_code"`
+		AccountNumber   string `json:"account_number"`
 	}
 
 	PassengerType string

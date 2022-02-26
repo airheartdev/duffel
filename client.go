@@ -64,7 +64,9 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 	req.Header.Add("Duffel-Version", c.options.Version)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.APIToken))
 	for _, o := range opts {
-		o(req)
+		if o != nil {
+			o(req)
+		}
 	}
 
 	resp, err := c.httpDoer.Do(req)
@@ -95,7 +97,7 @@ func (c *client[R, T]) buildRequestURL(resourceName string) (*url.URL, error) {
 	return u, nil
 }
 
-func decodeResponse(response *http.Response) (io.ReadCloser, error) {
+func gzipResponseReader(response *http.Response) (io.ReadCloser, error) {
 	var reader io.ReadCloser
 	var err error
 	if response.Header.Get("Content-Encoding") == "gzip" {
@@ -110,7 +112,7 @@ func decodeResponse(response *http.Response) (io.ReadCloser, error) {
 }
 
 func decodeError(response *http.Response) error {
-	reader, err := decodeResponse(response)
+	reader, err := gzipResponseReader(response)
 	if err != nil {
 		return err
 	}

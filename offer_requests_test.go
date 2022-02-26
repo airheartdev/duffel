@@ -26,7 +26,7 @@ func TestCreateOffersRequest(t *testing.T) {
 	age := 30
 
 	client := New("duffel_test_123")
-	data, err := client.CreateOfferRequest(ctx, &OfferRequestInput{
+	data, err := client.CreateOfferRequest(ctx, OfferRequestInput{
 		Passengers: []Passenger{
 			{
 				ID:         "1",

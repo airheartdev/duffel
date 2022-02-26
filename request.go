@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
+	"github.com/gorilla/schema"
 	"github.com/pkg/errors"
 	"golang.org/x/time/rate"
 )
@@ -122,8 +124,31 @@ func (c *client[Req, Resp]) getIterator(ctx context.Context, method string, reso
 func WithRequestPagination(meta *ListMeta) func(req *http.Request) {
 	return func(req *http.Request) {
 		q := req.URL.Query()
-		if meta != nil && meta.After != "" {
-			q.Add("after", meta.After)
+
+		if meta != nil {
+			enc := schema.NewEncoder()
+			enc.SetAliasTag("url")
+			err := enc.Encode(meta, q)
+			if err != nil {
+				panic(err)
+			}
+			log.Println(q.Encode())
+			req.URL.RawQuery = q.Encode()
+		}
+	}
+}
+
+func WithURLParams[T any](params ...T) func(req *http.Request) {
+	return func(req *http.Request) {
+		q := req.URL.Query()
+		enc := schema.NewEncoder()
+		enc.SetAliasTag("url")
+
+		for _, param := range params {
+			err := enc.Encode(param, q)
+			if err != nil {
+				panic(err)
+			}
 		}
 		req.URL.RawQuery = q.Encode()
 	}

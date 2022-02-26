@@ -18,10 +18,10 @@ type (
 	}
 
 	OfferRequestInput struct {
-		Passengers   []Passenger         `json:"passengers"`
-		Slices       []OfferRequestSlice `json:"slices"`
-		CabinClass   CabinClass          `json:"cabin_class"`
-		ReturnOffers bool                `json:"-"`
+		Passengers   []Passenger         `json:"passengers" url:"-"`
+		Slices       []OfferRequestSlice `json:"slices" url:"-"`
+		CabinClass   CabinClass          `json:"cabin_class" url:"-"`
+		ReturnOffers bool                `json:"-" url:"return_offers,defualt=true"`
 	}
 
 	OfferRequestSlice struct {

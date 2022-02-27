@@ -15,7 +15,7 @@ func main() {
 
 	adult := duffel.PassengerTypeAdult
 
-	offers, err := client.CreateOfferRequest(context.Background(), &duffel.OfferRequestInput{
+	offers, err := client.CreateOfferRequest(context.Background(), duffel.OfferRequestInput{
 		ReturnOffers: true,
 		Passengers: []duffel.Passenger{
 			{

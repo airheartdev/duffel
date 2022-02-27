@@ -38,3 +38,25 @@ func TestListAirports(t *testing.T) {
 
 	a.Equal("arp_lhr_gb", airport.ID)
 }
+
+func TestGetAirportByID(t *testing.T) {
+	defer gock.Off()
+
+	a := assert.New(t)
+	gock.New("https://api.duffel.com").
+		Get("/air/airports/arp_lhr_gb").
+		Reply(200).
+		SetHeader("Ratelimit-Limit", "5").
+		SetHeader("Ratelimit-Remaining", "5").
+		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
+		SetHeader("Date", time.Now().Format(time.RFC1123)).
+		File("fixtures/200-get-airport.json")
+
+	ctx := context.TODO()
+
+	client := New("duffel_test_123")
+	airport, err := client.GetAirport(ctx, "arp_lhr_gb")
+	a.NoError(err)
+	a.NotNil(airport)
+	a.Equal("arp_lhr_gb", airport.ID)
+}

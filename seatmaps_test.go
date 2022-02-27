@@ -37,4 +37,7 @@ func TestGetSeatmaps(t *testing.T) {
 	a.Equal("sea_00003hthlsHZ8W4LxXjkzo", data.ID)
 	a.Equal("seg_00009htYpSCXrwaB9Dn456", data.SegmentID)
 	a.Equal("sli_00009htYpSCXrwaB9Dn123", data.SliceID)
+
+	serviceAmount := data.Cabins[0].Rows[0].Sections[0].Elements[0].AvailableServices[0].TotalAmount().String()
+	a.Equal("30.00 GBP", serviceAmount)
 }

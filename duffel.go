@@ -19,48 +19,30 @@ type (
 
 	Gender string
 
-	OfferRequestInput struct {
-		Passengers   []Passenger         `json:"passengers" url:"-"`
-		Slices       []OfferRequestSlice `json:"slices" url:"-"`
-		CabinClass   CabinClass          `json:"cabin_class" url:"-"`
-		ReturnOffers bool                `json:"-" url:"return_offers,defualt=true"`
+	BaseSlice struct {
+		DepartureDate   Date     `json:"departure_date,omitempty"`
+		Destination     Location `json:"destination"`
+		DestinationType string   `json:"destination_type"`
+		Origin          Location `json:"origin"`
+		OriginType      string   `json:"origin_type"`
 	}
 
-	OfferRequestSlice struct {
-		DepartureDate Date   `json:"departure_date"`
-		Destination   string `json:"destination"`
-		Origin        string `json:"origin"`
-	}
-
-	OfferRequest struct {
-		ID         string      `json:"id"`
-		LiveMode   bool        `json:"live_mode"`
-		Offers     []Offer     `json:"offers"`
-		Slices     []Slice     `json:"slices"`
-		Passengers []Passenger `json:"passengers"`
-		CreatedAt  time.Time   `json:"created_at"`
-		CabinClass CabinClass  `json:"cabin_class"`
-	}
-
-	Offer struct {
-		Slices           []Slice     `json:"slices"`
-		Passengers       []Passenger `json:"passengers"`
-		UpdatedAt        time.Time   `json:"updated_at"`
-		TotalEmissionsKg string      `json:"total_emissions_kg"`
-		TotalCurrency    string      `json:"total_currency"`
-		TotalAmount      string      `json:"total_amount"`
-		TaxCurrency      string      `json:"tax_currency"`
-		TaxAmount        string      `json:"tax_amount"`
-	}
-
+	// TODO: We probably need an OfferRequestSlice and an OrderSlice since not all fields apply to both.
 	Slice struct {
-		OriginType      string    `json:"origin_type"`
-		Origin          Location  `json:"origin"`
-		DestinationType string    `json:"destination_type"`
-		Destination     Location  `json:"destination"`
-		DepartureDate   Date      `json:"departure_date,omitempty"`
-		CreatedAt       time.Time `json:"created_at,omitempty"`
-		Segments        []Flight  `json:"segments,omitempty"`
+		*BaseSlice
+		ID string `json:"id"`
+
+		// Whether this slice can be changed. This can only be true for paid orders.
+		Changeable bool `json:"changeable,omitempty"`
+
+		// The conditions associated with this slice, describing the kinds of modifications you can make and any penalties that will apply to those modifications.
+		Conditions Conditions `json:"conditions,omitempty"`
+
+		CreatedAt     time.Time `json:"created_at,omitempty"`
+		DepartureDate Date      `json:"departure_date,omitempty"`
+		Duration      Duration  `json:"duration,omitempty"`
+		Segments      []Flight  `json:"segments,omitempty"`
+		FareBrandName string    `json:"fare_brand_name,omitempty"`
 	}
 
 	Flight struct {
@@ -119,32 +101,22 @@ type (
 	}
 
 	Location struct {
-		ID              string     `json:"id"`
-		Type            string     `json:"type"`
-		Name            string     `json:"name"`
-		TimeZone        string     `json:"time_zone,omitempty"`
-		Longitude       *float64   `json:"longitude,omitempty"`
-		Latitude        *float64   `json:"latitude,omitempty"`
-		ICAOCode        *string    `json:"icao_code,omitempty"`
-		IATACountryCode *string    `json:"iata_country_code,omitempty"`
-		IATACode        *string    `json:"iata_code,omitempty"`
-		IATACityCode    *string    `json:"iata_city_code,omitempty"`
-		CityName        *string    `json:"city_name,omitempty"`
-		City            *Location  `json:"city,omitempty"`
-		Airports        []Location `json:"airports,omitempty"`
+		ID              string    `json:"id"`
+		Type            string    `json:"type"`
+		Name            string    `json:"name"`
+		TimeZone        string    `json:"time_zone,omitempty"`
+		Longitude       *float64  `json:"longitude,omitempty"`
+		Latitude        *float64  `json:"latitude,omitempty"`
+		ICAOCode        *string   `json:"icao_code,omitempty"`
+		IATACountryCode *string   `json:"iata_country_code,omitempty"`
+		IATACode        *string   `json:"iata_code,omitempty"`
+		IATACityCode    *string   `json:"iata_city_code,omitempty"`
+		CityName        *string   `json:"city_name,omitempty"`
+		City            *Location `json:"city,omitempty"`
+		Airports        []Airport `json:"airports,omitempty"`
 	}
 
-	Passenger struct {
-		ID         string `json:"id,omitempty"`
-		FamilyName string `json:"family_name"`
-		GivenName  string `json:"given_name"`
-		Age        *int   `json:"age,omitempty"`
-		// deprecated
-		Type                     *PassengerType            `json:"type,omitempty"`
-		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
-	}
-
-	PassengerCreateInput struct {
+	OrderPassenger struct {
 		ID         string         `json:"id"`
 		Title      PassengerTitle `json:"title"`
 		FamilyName string         `json:"family_name"`
@@ -155,7 +127,11 @@ type (
 		// The passenger's identity documents. You may only provide one identity document per passenger.
 		IdentityDocuments []IdentityDocument `json:"identity_documents,omitempty"`
 
+		// The `id` of the infant associated with this passenger
 		InfantPassengerID string `json:"infant_passenger_id,omitempty"`
+
+		// The Loyalty Programme Accounts for this passenger
+		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
 
 		// (Required) The passenger's phone number in E.164 (international) format
 		PhoneNumber string `json:"phone_number"`
@@ -180,6 +156,13 @@ type (
 
 		// Possible values: "arc_bsp_cash" or "balance"
 		Type string `json:"type"`
+	}
+
+	// The payment status for an order.
+	PaymentStatus struct {
+		AwaitingPayment         bool       `json:"awaiting_payment"`
+		PaymentRequiredBy       *time.Time `json:"payment_required_by,omitempty"`
+		PriceGuaranteeExpiresAt *time.Time `json:"price_guarantee_expires_at,omitempty"`
 	}
 
 	LoyaltyProgrammeAccount struct {

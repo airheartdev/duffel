@@ -5,20 +5,37 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type (
 	OfferClient interface {
-		UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input *PassengerUpdateInput) (*Passenger, error)
+		UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input *PassengerUpdateInput) (*OfferRequestPassenger, error)
 		ListOffers(ctx context.Context, reqId string, options ...ListOffersParams) *Iter[Offer]
 		GetOffer(ctx context.Context, id string) (*Offer, error)
+	}
+
+	Offer struct {
+		ID                                 string                  `json:"id"`
+		LiveMode                           bool                    `json:"live_mode"`
+		CreatedAt                          time.Time               `json:"created_at"`
+		UpdatedAt                          time.Time               `json:"updated_at"`
+		TotalEmissionsKg                   string                  `json:"total_emissions_kg"`
+		TotalCurrency                      string                  `json:"total_currency"`
+		TotalAmount                        string                  `json:"total_amount"`
+		TaxCurrency                        string                  `json:"tax_currency"`
+		TaxAmount                          string                  `json:"tax_amount"`
+		Owner                              Airline                 `json:"owner"`
+		Slices                             []Slice                 `json:"slices"`
+		Passengers                         []OfferRequestPassenger `json:"passengers"`
+		PassengerIdentityDocumentsRequired bool                    `json:"passenger_identity_documents_required"`
 	}
 
 	ListOffersSortParam string
 
 	ListOffersParams struct {
 		Sort           ListOffersSortParam `url:"sort,omitempty"`
-		MaxConnections int                 `url:"max_connections,omiempty"`
+		MaxConnections int                 `url:"max_connections,omitempty"`
 	}
 )
 

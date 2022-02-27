@@ -2,11 +2,12 @@ package duffel
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/segmentio/encoding/json"
 
 	"github.com/gorilla/schema"
 	"github.com/pkg/errors"

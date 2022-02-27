@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/airheartdev/duffel/iso8601"
+	"github.com/segmentio/encoding/json"
 )
 
 type (
@@ -15,9 +16,15 @@ type (
 	Distance float64
 )
 
+const DateFormat = "2006-01-02"
+
 func (t Date) MarshalJSON() ([]byte, error) {
-	stamp := fmt.Sprintf("\"%s\"", time.Time(t).Format("2006-01-02"))
+	stamp := fmt.Sprintf("\"%s\"", time.Time(t).Format(DateFormat))
 	return []byte(stamp), nil
+}
+
+func (t Date) String() string {
+	return time.Time(t).Format(DateFormat)
 }
 
 // UnmarshalJSON implements the json.Unmarshaler from date string to time.Time
@@ -42,6 +49,10 @@ func (t *Date) UnmarshalJSON(b []byte) error {
 func (t DateTime) MarshalJSON() ([]byte, error) {
 	stamp := fmt.Sprintf("\"%s\"", time.Time(t).Format(time.RFC3339Nano))
 	return []byte(stamp), nil
+}
+
+func (t DateTime) String() string {
+	return time.Time(t).Format(time.RFC3339)
 }
 
 var timeFormats = []string{
@@ -127,10 +138,17 @@ func (t *Distance) UnmarshalJSON(b []byte) error {
 var ErrNullValue = fmt.Errorf("null value")
 
 func parseJSONBytesToString(b []byte) (string, error) {
-	str := string(b)
-	if str == "null" {
+	b = json.Unescape(b)
+	if len(b) == 0 {
 		return "", ErrNullValue
 	}
 
-	return strconv.Unquote(str)
+	return string(b), nil
+
+	// str := string(b)
+	// if str == "null" {
+	// 	return "", ErrNullValue
+	// }
+
+	// return strconv.Unquote(str)
 }

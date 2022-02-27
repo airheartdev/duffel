@@ -1,9 +1,10 @@
 package duffel
 
 import (
-	"encoding/json"
 	"testing"
 	"time"
+
+	"github.com/segmentio/encoding/json"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -58,4 +59,14 @@ func TestDateTime(t *testing.T) {
 			t.Errorf("%s: expected %s, got %s", test.Input, test.Expected, actual)
 		}
 	}
+}
+
+func TestJSONUnescape(t *testing.T) {
+	b := []byte("\"name\"")
+	a := json.Unescape(b)
+	assert.Equal(t, "name", string(a))
+
+	b = []byte(`"null"`)
+	a = json.Unescape(b)
+	assert.Equal(t, "null", string(a))
 }

@@ -97,3 +97,10 @@ func GetIter[T any](pager PageFn[T]) *Iter[T] {
 
 	return iter
 }
+
+// ErrIter creates an iterators that always returns the given error.
+func ErrIter[T any](err error) *Iter[T] {
+	return GetIter(func(*ListMeta) (*List[T], error) {
+		return nil, err
+	})
+}

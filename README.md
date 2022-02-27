@@ -16,6 +16,49 @@ go get github.com/airheartdev/duffel
 
 See the [examples/\*](/examples/) directory
 
+## Usage
+
+_TBD_
+
+### Working with iterators
+
+All requests that return more than one record will return an iterator. An Iterator automatically paginates results and respects rate limits, reducing the complexity of the overall programming model.
+
+```go
+client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
+iter := client.ListAirports(ctx, duffel.ListAirportsParams{
+  IATACountryCode: "AU",
+})
+
+for iter.Next() {
+  airport := iter.Current()
+  fmt.Printf("%s\n", airport.Name)
+}
+
+// If there was an error, the loop above will exit so that you can
+// inspect the error here:
+if iter.Err() != nil {
+  log.Fatalln(iter.Err())
+}
+```
+
+### Error Handling
+
+Each API method returns an error or an iterator that returns errors at each iteration. If an error is returned from Duffel, it will be of type `DuffelError` and expose more details on how to handle it.
+
+```go
+// Example error inspection after making an API call:
+offer, err := client.GetOffer(ctx, "off_123")
+if err != nil {
+  if err, ok:= err.(duffel.DuffelError); ok {
+    // err.Errors[0].Type etc
+    // err.IsCode(duffel.BadRequest)
+  }else{
+    // Do something with regular Go error
+  }
+}
+```
+
 ## Implementation status:
 
 To maintain simplicity and ease of use, this client library is hand-coded (instead of using Postman to Go code generation) and contributions are greatly apprecicated.

@@ -27,12 +27,12 @@ type (
 	}
 
 	OfferRequestPassenger struct {
-		FamilyName               string                    `json:"family_name"`
-		GivenName                string                    `json:"given_name"`
+		FamilyName               string                    `json:"family_name,omitempty"`
+		GivenName                string                    `json:"given_name,omitempty"`
 		Age                      int                       `json:"age,omitempty"`
 		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
 		// deprecated
-		Type *PassengerType `json:"type,omitempty"`
+		Type PassengerType `json:"type,omitempty"`
 	}
 
 	// OfferRequest is the response from the OfferRequest endpoint, created using the OfferRequestInput.
@@ -48,7 +48,7 @@ type (
 )
 
 func (a *API) CreateOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error) {
-	client := newInternalClient[OfferRequestInput, OfferRequest](a)
+	client := newInternalClient[OfferRequestInput, OfferRequest](a).Debug()
 	return client.makeRequestWithPayload(ctx,
 		"/air/offer_requests",
 		http.MethodPost,

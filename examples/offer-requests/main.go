@@ -14,7 +14,6 @@ func main() {
 	apiToken := os.Getenv("DUFFEL_TOKEN")
 	client := duffel.New(apiToken)
 
-	adult := duffel.PassengerTypeAdult
 	childAge := 1
 
 	data, err := client.CreateOfferRequest(context.Background(), duffel.OfferRequestInput{
@@ -23,7 +22,7 @@ func main() {
 			{
 				FamilyName: "Earhart",
 				GivenName:  "Amelia",
-				Type:       &adult,
+				Type:       duffel.PassengerTypeAdult,
 				LoyaltyProgrammeAccounts: []duffel.LoyaltyProgrammeAccount{
 					{
 						AirlineIATACode: "QF",
@@ -32,7 +31,7 @@ func main() {
 				},
 			},
 			{
-				Type: &adult,
+				Type: duffel.PassengerTypeAdult,
 			},
 			{
 				Age: childAge,

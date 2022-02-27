@@ -79,9 +79,14 @@ func TestListOrders(t *testing.T) {
 	a.Equal("RZPNX8", order1.BookingReference)
 	a.Equal("ord_00009hthhsUZ8W4LxQgkjo", order1.ID)
 
+	a.Equal(&ListMeta{After: "g2wAAAACbQAAABBBZXJvbWlzdC1LaGFya2l2bQAAAB=", Limit: 50}, iter.Meta())
+
 	iter.Next()
 	a.NoError(iter.Err())
 	order2 := iter.Current()
+
+	a.Len(iter.List().GetItems(), 1, "iterator has 1 item on this page")
+	a.Equal(&ListMeta{Limit: 50}, iter.Meta())
 
 	a.Equal("ABC123", order2.BookingReference)
 	a.Equal("ord_00009hthhsUZ8W4LxQgkjo", order2.ID)

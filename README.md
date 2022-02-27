@@ -84,7 +84,7 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
   - [x] Get offer by ID
   - [x] List all offers
 - [x] Offers
-- [ ] Orders
+- [x] Orders
 - [ ] Payments
 - [ ] Seat Maps
 - [ ] Order Cancellations
@@ -92,8 +92,8 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [ ] Order Change Offers
 - [ ] Order Changes
 - [x] Airports
-- [ ] Airlines
-- [ ] Equipment
+- [x] Airlines
+- [x] Equipment (Aircraft)
 
 ## License
 

@@ -17,6 +17,8 @@ type (
 		AirportsClient
 	}
 
+	Gender string
+
 	OfferRequestInput struct {
 		Passengers   []Passenger         `json:"passengers" url:"-"`
 		Slices       []OfferRequestSlice `json:"slices" url:"-"`
@@ -133,12 +135,33 @@ type (
 	}
 
 	Passenger struct {
-		ID                       string                    `json:"id,omitempty"`
-		FamilyName               string                    `json:"family_name"`
-		GivenName                string                    `json:"given_name"`
-		Age                      *int                      `json:"age,omitempty"`
+		ID         string `json:"id,omitempty"`
+		FamilyName string `json:"family_name"`
+		GivenName  string `json:"given_name"`
+		Age        *int   `json:"age,omitempty"`
+		// deprecated
 		Type                     *PassengerType            `json:"type,omitempty"`
 		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
+	}
+
+	PassengerCreateInput struct {
+		ID         string         `json:"id"`
+		Title      PassengerTitle `json:"title"`
+		FamilyName string         `json:"family_name"`
+		GivenName  string         `json:"given_name"`
+		BornOn     Date           `json:"born_on"`
+		Email      string         `json:"email"`
+		Gender     Gender         `json:"gender"`
+		// The passenger's identity documents. You may only provide one identity document per passenger.
+		IdentityDocuments []IdentityDocument `json:"identity_documents,omitempty"`
+
+		InfantPassengerID string `json:"infant_passenger_id,omitempty"`
+
+		// (Required) The passenger's phone number in E.164 (international) format
+		PhoneNumber string `json:"phone_number"`
+
+		// deprecated
+		Type PassengerType `json:"type"`
 	}
 
 	PassengerUpdateInput struct {
@@ -147,12 +170,40 @@ type (
 		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
 	}
 
+	// The payment details to use to pay for the order.
+	// This key should be omitted when the order’s type is hold.
+	PaymentCreateInput struct {
+		// The amount of the payment. This should be the same as the total_amount of the offer specified in selected_offers, plus the total_amount of all the services specified in services.
+		Amount string `json:"amount"`
+		// The currency of the amount, as an ISO 4217 currency code. This should be the same as the total_currency of the offer specified in selected_offers.
+		Currency string `json:"currency"`
+
+		// Possible values: "arc_bsp_cash" or "balance"
+		Type string `json:"type"`
+	}
+
 	LoyaltyProgrammeAccount struct {
 		AirlineIATACode string `json:"airline_iata_code"`
 		AccountNumber   string `json:"account_number"`
 	}
 
+	IdentityDocument struct {
+		// The unique identifier of the identity document.
+		// We currently only support passport so this would be the passport number.
+		UniqueIdentifier string `json:"unique_identifier"`
+
+		// The date on which the identity document expires
+		ExpiresOn Date `json:"expires_on"`
+
+		// The ISO 3166-1 alpha-2 code of the country that issued this identity document
+		IssuingCountryCode string `json:"issuing_country_code"`
+
+		Type string `json:"type"`
+	}
+
 	PassengerType string
+
+	PassengerTitle string
 
 	CabinClass string
 
@@ -182,14 +233,25 @@ type (
 )
 
 const (
-	PassengerTypeAdult             PassengerType = "adult"
-	PassengerTypeChild             PassengerType = "child"
+	// deprecated
+	PassengerTypeAdult PassengerType = "adult"
+	// deprecated
+	PassengerTypeChild PassengerType = "child"
+	// deprecated
 	PassengerTypeInfantWithoutSeat PassengerType = "infant_without_seat"
 
 	CabinClassEconomy  CabinClass = "economy"
 	CabinClassPremium  CabinClass = "premium"
 	CabinClassBusiness CabinClass = "business"
 	CabinClassFirst    CabinClass = "first"
+
+	GenderMale   Gender = "m"
+	GenderFemale Gender = "f"
+
+	PassengerTitleMr   PassengerTitle = "mr"
+	PassengerTitleMs   PassengerTitle = "ms"
+	PassengerTitleMrs  PassengerTitle = "mrs"
+	PassengerTitleMiss PassengerTitle = "miss"
 )
 
 func New(apiToken string, opts ...Option) Duffel {

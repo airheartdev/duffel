@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -169,7 +170,11 @@ func listOfferRequests(c *cli.Context) error {
 
 	for iter.Next() {
 		req := iter.Current()
-		log.Println(req.ID, req.CreatedAt.String())
+		fmt.Printf("===> Offer Request: %s created: %s\n", req.ID, time.Time(req.CreatedAt).Format(time.RFC3339))
+
+		for _, slice := range req.Slices {
+			fmt.Printf("   > %s to %s on %s\n", *slice.Origin.IATACode, *slice.Destination.IATACode, slice.DepartureDate.String())
+		}
 	}
 
 	return iter.Err()

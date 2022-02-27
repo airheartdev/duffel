@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/airheartdev/duffel/iso8601"
-	"github.com/pkg/errors"
 )
 
 type (
@@ -23,13 +22,12 @@ func (t Date) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler from date string to time.Time
 func (t *Date) UnmarshalJSON(b []byte) error {
-	str := string(b)
-	if str == "null" {
-		return nil
-	}
-
-	str, err := strconv.Unquote(str)
+	str, err := parseJSONBytesToString(b)
 	if err != nil {
+		if err == ErrNullValue {
+			return nil
+		}
+
 		return err
 	}
 
@@ -55,13 +53,11 @@ var timeFormats = []string{
 
 // UnmarshalJSON implements the json.Unmarshaler from date string to time.Time
 func (t *DateTime) UnmarshalJSON(b []byte) error {
-	str := string(b)
-	if str == "null" {
-		return nil
-	}
-
-	str, err := strconv.Unquote(str)
+	str, err := parseJSONBytesToString(b)
 	if err != nil {
+		if err == ErrNullValue {
+			return nil
+		}
 		return err
 	}
 
@@ -87,7 +83,15 @@ func (t Duration) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler from date string to time.Time
 func (t *Duration) UnmarshalJSON(b []byte) error {
-	d, err := iso8601.ParseDuration(string(b))
+	f, err := parseJSONBytesToString(b)
+	if err != nil {
+		if err == ErrNullValue {
+			return nil
+		}
+		return err
+	}
+
+	d, err := iso8601.ParseDuration(f)
 	if err != nil {
 		return err
 	}
@@ -102,14 +106,12 @@ func (t Distance) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler from date string to time.Time
 func (t *Distance) UnmarshalJSON(b []byte) error {
-	str := string(b)
-	if str == "null" {
-		return nil
-	}
-
-	f, err := strconv.Unquote(str)
+	f, err := parseJSONBytesToString(b)
 	if err != nil {
-		return errors.Wrap(err, "unquote distance")
+		if err == ErrNullValue {
+			return nil
+		}
+		return err
 	}
 
 	d, err := strconv.ParseFloat(f, 16)
@@ -120,4 +122,15 @@ func (t *Distance) UnmarshalJSON(b []byte) error {
 	*t = Distance(d)
 
 	return nil
+}
+
+var ErrNullValue = fmt.Errorf("null value")
+
+func parseJSONBytesToString(b []byte) (string, error) {
+	str := string(b)
+	if str == "null" {
+		return "", ErrNullValue
+	}
+
+	return strconv.Unquote(str)
 }

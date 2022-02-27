@@ -14,6 +14,7 @@ func TestDurationParsing(t *testing.T) {
 		{input: "P1WT1S", expected: (time.Hour * 24 * 7) + (1 * time.Second)},
 		{input: "P1DT1H", expected: testDuration("25h")},
 		{input: "PT12H58M", expected: testDuration("12h58m")},
+		{input: "PT3H12M", expected: testDuration("3h12m")},
 	}
 
 	for _, test := range tests {

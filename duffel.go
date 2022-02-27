@@ -17,6 +17,7 @@ type (
 		OrderClient
 		AirportsClient
 		AirlinesClient
+		AircraftClient
 	}
 
 	Gender string
@@ -61,7 +62,7 @@ type (
 		Destination                  Location           `json:"destination"`
 		DepartingAt                  DateTime           `json:"departing_at"`
 		ArrivingAt                   DateTime           `json:"arriving_at"`
-		Aircraft                     Equipment          `json:"aircraft"`
+		Aircraft                     Aircraft           `json:"aircraft"`
 	}
 
 	SegmentPassenger struct {
@@ -72,7 +73,7 @@ type (
 		Baggages                []Baggage  `json:"baggages"`
 	}
 
-	Equipment struct {
+	Aircraft struct {
 		IATACode string `json:"iata_code"`
 		ID       string `json:"id"`
 		Name     string `json:"name"`

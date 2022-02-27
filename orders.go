@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 	"time"
+
+	"github.com/bojanz/currency"
 )
 
 const orderIDPrefix = "ord_"
@@ -11,7 +13,44 @@ const orderIDPrefix = "ord_"
 type (
 	ListOrdersSort string
 
-	Order struct{}
+	Order struct {
+		ID               string           `json:"id"`
+		LiveMode         bool             `json:"live_mode"`
+		Metadata         Metadata         `json:"metadata"`
+		RawBaseAmount    *string          `json:"base_amount,omitempty"`
+		RawBaseCurrency  *string          `json:"base_currency,omitempty"`
+		BookingReference string           `json:"booking_reference"`
+		CancelledAt      *time.Time       `json:"cancelled_at,omitempty"`
+		CreatedAt        time.Time        `json:"created_at"`
+		Conditions       Conditions       `json:"conditions,omitempty"`
+		Documents        []Document       `json:"documents,omitempty"`
+		Owner            Airline          `json:"owner"`
+		Passengers       []OrderPassenger `json:"passengers,omitempty"`
+		PaymentStatus    PaymentStatus    `json:"payment_status"`
+		Services         []Service        `json:"services,omitempty"`
+		Slices           []Slice          `json:"slices,omitempty"`
+		SyncedAt         time.Time        `json:"synced_at"`
+		RawTaxAmount     *string          `json:"tax_amount,omitempty"`
+		RawTaxCurrency   *string          `json:"tax_currency,omitempty"`
+		RawTotalAmount   string           `json:"total_amount"`
+		RawTotalCurrency string           `json:"total_currency"`
+	}
+
+	Conditions struct {
+		ChangeBeforeDeparture *ChangeCondition `json:"change_before_departure,omitempty"`
+		RefundBeforeDeparture *ChangeCondition `json:"refund_before_departure,omitempty"`
+	}
+
+	ChangeCondition struct {
+		Allowed            bool    `json:"allowed"`
+		RawPenaltyAmount   *string `json:"penalty_amount,omitempty"`
+		RawPenaltyCurrency *string `json:"penalty_currency,omitempty"`
+	}
+
+	Document struct {
+		Type             string `json:"type"`
+		UniqueIdentifier string `json:"unique_identifier"`
+	}
 
 	// NOTE: If you receive a 500 Internal Server Error when trying to create an order,
 	// it may have still been created on the airline’s side.
@@ -27,11 +66,11 @@ type (
 		// structured format. Duffel does not use this information.
 		//
 		// You should not store sensitive information in this field.
-		Metadata map[string]any `json:"metadata,omitempty"`
+		Metadata Metadata `json:"metadata,omitempty"`
 
 		// The personal details of the passengers, expanding on
 		// the information initially provided when creating the offer request.
-		Passengers []PassengerCreateInput `json:"passengers"`
+		Passengers []OrderPassenger `json:"passengers"`
 
 		Payments []PaymentCreateInput `json:"payments,omitempty"`
 
@@ -48,6 +87,33 @@ type (
 
 		// The quantity of the service to book. This will always be 1 for seat services.
 		Quantity int `json:"quantity"`
+	}
+
+	Service struct {
+		// Duffel's unique identifier for the booked service
+		ID string `json:"id"`
+
+		// The metadata varies by the type of service.
+		// It includes further data about the service. For example, for
+		// baggages, it may have data about size and weight restrictions.
+		Metadata Metadata `json:"metadata"`
+
+		// List of passenger ids the service applies to.
+		// The service applies to all the passengers in this list.
+		PassengerIDs []string `json:"passenger_ids"`
+
+		// The quantity of the service that was booked
+		Quantity int `json:"quantity"`
+
+		// List of segment ids the service applies to. The service applies to all the segments in this list.
+		SegmentIDs []string `json:"segment_ids"`
+
+		// The total price of the service for all passengers and segments it applies to, accounting for quantity and including taxes
+		RawTotalAmount   string `json:"total_amount,omitempty"`
+		RawTotalCurrency string `json:"total_currency,omitempty"`
+
+		// Possible values: "baggage" or "seat"
+		Type string `json:"type"`
 	}
 
 	// OrderUpdateParams is used as the input to UpdateOrder.
@@ -98,6 +164,8 @@ type (
 		PassengerNames []string `url:"passenger_name,omitempty"`
 	}
 
+	Metadata map[string]any
+
 	TimeFilter struct {
 		Before *time.Time `url:"before,omitempty"`
 		After  *time.Time `url:"after,omitempty"`
@@ -129,4 +197,60 @@ const (
 func (a *API) CreateOrder(ctx context.Context, input CreateOrderInput) (*Order, error) {
 	c := newInternalClient[CreateOrderInput, Order](a)
 	return c.makeRequestWithPayload(ctx, "/air/orders", http.MethodPost, &input)
+}
+
+// CreateOrder creates a new order.
+func (a *API) GetOrder(ctx context.Context, id string) (*Order, error) {
+	c := newInternalClient[CreateOrderInput, Order](a)
+	return c.makeRequestWithPayload(ctx, "/air/orders/"+id, http.MethodGet, nil)
+}
+
+func (o *Order) BaseAmount() *currency.Amount {
+	if o.RawBaseAmount != nil && o.RawBaseCurrency != nil {
+		amount, err := currency.NewAmount(*o.RawBaseAmount, *o.RawBaseCurrency)
+		if err != nil {
+			return nil
+		}
+		return &amount
+	}
+	return nil
+}
+
+func (o *Order) TaxAmount() *currency.Amount {
+	if o.RawTaxAmount != nil && o.RawTaxCurrency != nil {
+		amount, err := currency.NewAmount(*o.RawTaxAmount, *o.RawTaxCurrency)
+		if err != nil {
+			return nil
+		}
+		return &amount
+	}
+	return nil
+}
+
+func (o *Order) TotalAmount() currency.Amount {
+	amount, err := currency.NewAmount(o.RawTotalAmount, o.RawTotalCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
+}
+
+func (c *ChangeCondition) PenaltyAmount() *currency.Amount {
+	if c.RawPenaltyAmount != nil && c.RawPenaltyCurrency != nil {
+		amount, err := currency.NewAmount(*c.RawPenaltyAmount, *c.RawPenaltyCurrency)
+		if err != nil {
+			return nil
+		}
+		return &amount
+	}
+
+	return nil
+}
+
+func (s *Service) TotalAmount() currency.Amount {
+	amount, err := currency.NewAmount(s.RawTotalAmount, s.RawTotalCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
 }

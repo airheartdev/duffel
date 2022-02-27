@@ -16,6 +16,7 @@ type (
 		OfferClient
 		OrderClient
 		AirportsClient
+		AirlinesClient
 	}
 
 	Gender string

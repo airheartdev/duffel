@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/segmentio/encoding/json"
 )
 
 type Payload[T any] struct {

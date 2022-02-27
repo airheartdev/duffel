@@ -45,8 +45,8 @@ const (
 )
 
 // UpdateOfferPassenger updates a single offer passenger.
-func (a *API) UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input *PassengerUpdateInput) (*Passenger, error) {
-	client := newInternalClient[PassengerUpdateInput, Passenger](a)
+func (a *API) UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input *PassengerUpdateInput) (*OfferRequestPassenger, error) {
+	client := newInternalClient[PassengerUpdateInput, OfferRequestPassenger](a)
 	url := fmt.Sprintf("/air/offers/%s/passengers/%s", offerRequestID, passengerID)
 	return client.makeRequestWithPayload(ctx, url, http.MethodPatch, input)
 }
@@ -54,13 +54,9 @@ func (a *API) UpdateOfferPassenger(ctx context.Context, offerRequestID, passenge
 // ListOffers lists all the offers for an offer request. Returns an iterator.
 func (a *API) ListOffers(ctx context.Context, offerRequestId string, options ...ListOffersParams) *Iter[Offer] {
 	if offerRequestId == "" {
-		return GetIter(func(meta *ListMeta) (*List[Offer], error) {
-			return nil, fmt.Errorf("offerRequestId param is required")
-		})
+		return ErrIter[Offer](fmt.Errorf("offerRequestId param is required"))
 	} else if !strings.HasPrefix(offerRequestId, "orq_") {
-		return GetIter(func(meta *ListMeta) (*List[Offer], error) {
-			return nil, fmt.Errorf("offerRequestId should begin with orq_")
-		})
+		return ErrIter[Offer](fmt.Errorf("offerRequestId should begin with orq_"))
 	}
 
 	c := newInternalClient[struct{}, Offer](a)

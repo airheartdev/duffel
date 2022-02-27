@@ -22,7 +22,6 @@ func TestCreateOffersRequest(t *testing.T) {
 
 	ctx := context.TODO()
 
-	adult := PassengerTypeAdult
 	age := 30
 
 	client := New("duffel_test_123")
@@ -32,7 +31,7 @@ func TestCreateOffersRequest(t *testing.T) {
 				FamilyName: "Earhardt",
 				GivenName:  "Amelia",
 				Age:        age,
-				Type:       &adult,
+				Type:       PassengerTypeAdult,
 			},
 			{
 				Age: 1,

@@ -20,6 +20,17 @@ See the [examples/\*](/examples/) directory
 
 _TBD_
 
+### Monetary amounts
+
+All models that have fields for an amount and a currency implement a method to return a parsed `currency.Amount{}`
+
+```go
+total:= order.TotalAmount() // currency.Amount
+total.Currency // USD
+total.Amount // 100.00
+total.String() // 100.00 USD
+```
+
 ### Working with iterators
 
 All requests that return more than one record will return an iterator. An Iterator automatically paginates results and respects rate limits, reducing the complexity of the overall programming model.

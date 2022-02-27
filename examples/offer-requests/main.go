@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -14,22 +15,40 @@ func main() {
 	client := duffel.New(apiToken)
 
 	adult := duffel.PassengerTypeAdult
+	childAge := 1
 
-	offers, err := client.CreateOfferRequest(context.Background(), duffel.OfferRequestInput{
+	data, err := client.CreateOfferRequest(context.Background(), duffel.OfferRequestInput{
 		ReturnOffers: true,
-		Passengers: []duffel.Passenger{
+		Passengers: []duffel.OfferRequestPassenger{
 			{
 				FamilyName: "Earhart",
 				GivenName:  "Amelia",
 				Type:       &adult,
+				LoyaltyProgrammeAccounts: []duffel.LoyaltyProgrammeAccount{
+					{
+						AirlineIATACode: "QF",
+						AccountNumber:   "1922223336",
+					},
+				},
+			},
+			{
+				Type: &adult,
+			},
+			{
+				Age: childAge,
 			},
 		},
-		CabinClass: duffel.CabinClassEconomy,
+		CabinClass: duffel.CabinClassBusiness,
 		Slices: []duffel.OfferRequestSlice{
 			{
 				DepartureDate: duffel.Date(time.Now().AddDate(0, 0, 7)),
-				Origin:        "JFK",
+				Origin:        "NYC",
 				Destination:   "AUS",
+			},
+			{
+				DepartureDate: duffel.Date(time.Now().AddDate(0, 0, 10)),
+				Origin:        "AUS",
+				Destination:   "NYC",
 			},
 		},
 	})
@@ -38,22 +57,36 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	for _, offer := range offers.Offers {
-		log.Println("Passengers:")
-		for _, p := range offer.Passengers {
-			log.Printf("- %s %s (%s)\n", p.GivenName, p.FamilyName, p.Type)
+	fmt.Printf("Received %d flight offers:\n\n", len(data.Offers))
+
+	for _, slice := range data.Slices {
+		fmt.Printf("\t%s -> %s on %s\n", slice.Origin.Name, slice.Destination.Name, slice.DepartureDate.String())
+	}
+
+	fmt.Println()
+
+	for _, offer := range data.Offers {
+		fmt.Printf("===> Offer %s from %s\n     Passengers: ", offer.ID, offer.Owner.Name)
+		for i, p := range offer.Passengers {
+			fmt.Printf("(%s) %s %s", p.Type, p.GivenName, p.FamilyName)
+			if i < len(offer.Passengers)-1 {
+				fmt.Print(", ")
+			}
 		}
 
-		log.Printf("Flights $%s", offer.TaxAmount)
+		fmt.Println()
+
+		fmt.Printf("---> Flights $%s\n", offer.TaxAmount)
 		for _, s := range offer.Slices {
-			log.Printf("- %s to %s on %s\n", *s.Origin.CityName, *s.Destination.CityName, time.Time(s.DepartureDate).Format("Mon Jan 2 15:04"))
+			fmt.Printf("    🛫 %s to %s\n", *s.Origin.CityName, *s.Destination.CityName)
 
-			distances := collect(s.Segments, func(t duffel.Flight) float64 {
-				return float64(t.Distance)
-			})
+			for _, f := range s.Segments {
+				fmt.Printf("    Departing at %s • Arriving at %s\n", f.DepartingAt, f.ArrivingAt)
+			}
 
-			log.Printf("distance: %1.2fkm", sum(distances))
+			fmt.Printf("    🛬 %s • %s\n", s.FareBrandName, time.Duration(s.Duration).String())
 		}
+		fmt.Println()
 	}
 }
 

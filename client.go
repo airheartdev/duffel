@@ -24,6 +24,8 @@ type ResponsePayload[T any] struct {
 
 type RequestOption func(req *http.Request) error
 
+type EmptyPayload struct{}
+
 func buildRequestPayload[T any](data T) *Payload[T] {
 	return &Payload[T]{
 		Data: data,

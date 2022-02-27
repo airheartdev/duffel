@@ -86,7 +86,7 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [x] Offers
 - [x] Orders
 - [ ] Payments
-- [ ] Seat Maps
+- [x] Seat Maps
 - [ ] Order Cancellations
 - [ ] Order Change Requests
 - [ ] Order Change Offers

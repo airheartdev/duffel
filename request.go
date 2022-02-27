@@ -22,7 +22,42 @@ func newInternalClient[Req any, Resp any](a *API) *client[Req, Resp] {
 	}
 }
 
-// TODO: refactor this to use `makeIteratorRequest` instead of duplicating most of the logic
+// Get makes a GET request to the specified resource.
+func (c *client[Req, Resp]) Get(ctx context.Context, resourcePath string, opts ...RequestOption) (*http.Response, error) {
+	err := c.limiter.Wait(ctx) // This is a blocking call. Honors the rate limit
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.makeRequest(ctx, resourcePath, http.MethodGet, nil, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	rateLimit, err := parseRateLimit(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	c.rateLimit = rateLimit
+	c.limiter.SetBurst(rateLimit.Limit)
+	c.limiter.SetLimit(rate.Every(rateLimit.Period))
+
+	if rateLimit.Remaining == 0 || resp.StatusCode == http.StatusTooManyRequests {
+		return nil, fmt.Errorf("rate limit exceeded, reset in: %s, current limit: %d", rateLimit.Period.String(), rateLimit.Limit)
+	}
+	return resp, nil
+}
+
+func (c *client[Req, Resp]) Post(ctx context.Context, resourcePath string, requestInput *Req, opts ...RequestOption) (*Resp, error) {
+	resp, err := c.makeIteratorRequest(ctx, resourcePath, http.MethodPost, requestInput, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp.Data, nil
+}
+
 func (c *client[Req, Resp]) makeRequestWithPayload(ctx context.Context, resourceName string, method string, requestInput *Req, requestBuilders ...RequestOption) (*Resp, error) {
 	resp, err := c.makeIteratorRequest(ctx, resourceName, method, requestInput, requestBuilders...)
 	if err != nil {
@@ -32,8 +67,8 @@ func (c *client[Req, Resp]) makeRequestWithPayload(ctx context.Context, resource
 	return &resp.Data, nil
 }
 
-func (c *client[Req, Resp]) do(ctx context.Context, resourceName string, method string, requestInput *Req, requestBuilders ...RequestOption) (*http.Response, error) {
-	payload, err := encodePayload(requestInput)
+func (c *client[Req, Resp]) Do(ctx context.Context, resourceName string, method string, body *Req, opts ...RequestOption) (*http.Response, error) {
+	payload, err := encodePayload(body)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +78,7 @@ func (c *client[Req, Resp]) do(ctx context.Context, resourceName string, method 
 		return nil, err
 	}
 
-	resp, err := c.makeRequest(ctx, resourceName, method, payload, requestBuilders...)
+	resp, err := c.makeRequest(ctx, resourceName, method, payload, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +99,7 @@ func (c *client[Req, Resp]) do(ctx context.Context, resourceName string, method 
 }
 
 func (c *client[Req, Resp]) makeIteratorRequest(ctx context.Context, resourceName string, method string, requestInput *Req, requestBuilders ...RequestOption) (*ResponsePayload[Resp], error) {
-	resp, err := c.do(ctx, resourceName, method, requestInput, requestBuilders...)
+	resp, err := c.Do(ctx, resourceName, method, requestInput, requestBuilders...)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +120,7 @@ func (c *client[Req, Resp]) makeIteratorRequest(ctx context.Context, resourceNam
 }
 
 func (c *client[Req, Resp]) makeListRequest(ctx context.Context, resourceName string, method string, requestInput *Req, requestBuilders ...RequestOption) (*ResponsePayload[[]*Resp], error) {
-	resp, err := c.do(ctx, resourceName, method, requestInput, requestBuilders...)
+	resp, err := c.Do(ctx, resourceName, method, requestInput, requestBuilders...)
 	if err != nil {
 		return nil, err
 	}
@@ -121,8 +156,8 @@ func (c *client[Req, Resp]) getIterator(ctx context.Context, method string, reso
 	})
 }
 
-func WithRequestPagination(meta *ListMeta) func(req *http.Request) {
-	return func(req *http.Request) {
+func WithRequestPagination(meta *ListMeta) RequestOption {
+	return func(req *http.Request) error {
 		q := req.URL.Query()
 
 		if meta != nil {
@@ -130,16 +165,17 @@ func WithRequestPagination(meta *ListMeta) func(req *http.Request) {
 			enc.SetAliasTag("url")
 			err := enc.Encode(meta, q)
 			if err != nil {
-				panic(err)
+				return (err)
 			}
 			log.Println(q.Encode())
 			req.URL.RawQuery = q.Encode()
 		}
+		return nil
 	}
 }
 
-func WithURLParams[T any](params ...T) func(req *http.Request) {
-	return func(req *http.Request) {
+func WithURLParams[T any](params ...T) RequestOption {
+	return func(req *http.Request) error {
 		q := req.URL.Query()
 		enc := schema.NewEncoder()
 		enc.SetAliasTag("url")
@@ -147,17 +183,19 @@ func WithURLParams[T any](params ...T) func(req *http.Request) {
 		for _, param := range params {
 			err := enc.Encode(param, q)
 			if err != nil {
-				panic(err)
+				return (err)
 			}
 		}
 		req.URL.RawQuery = q.Encode()
+		return nil
 	}
 }
 
-func WithURLParam(key, value string) func(req *http.Request) {
-	return func(req *http.Request) {
+func WithURLParam(key, value string) RequestOption {
+	return func(req *http.Request) error {
 		q := req.URL.Query()
 		q.Add(key, value)
 		req.URL.RawQuery = q.Encode()
+		return nil
 	}
 }

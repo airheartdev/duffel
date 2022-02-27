@@ -2,6 +2,7 @@ package duffel
 
 import (
 	"context"
+	"net/http"
 	"time"
 )
 
@@ -123,3 +124,9 @@ const (
 	OrderTypeHold    OrderType = "hold"
 	OrderTypeInstant OrderType = "instant"
 )
+
+// CreateOrder creates a new order.
+func (a *API) CreateOrder(ctx context.Context, input CreateOrderInput) (*Order, error) {
+	c := newInternalClient[CreateOrderInput, Order](a)
+	return c.makeRequestWithPayload(ctx, "/air/orders", http.MethodPost, &input)
+}

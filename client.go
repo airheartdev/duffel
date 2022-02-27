@@ -20,7 +20,7 @@ type ResponsePayload[T any] struct {
 	Data T         `json:"data"`
 }
 
-type RequestOption func(req *http.Request)
+type RequestOption func(req *http.Request) error
 
 func buildRequestPayload[T any](data T) *Payload[T] {
 	return &Payload[T]{
@@ -63,9 +63,14 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 	req.Header.Add("User-Agent", c.options.UserAgent)
 	req.Header.Add("Duffel-Version", c.options.Version)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.APIToken))
+
+	// Apply request options
 	for _, o := range opts {
 		if o != nil {
-			o(req)
+			err := o(req)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -74,10 +79,7 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 		return nil, err
 	}
 
-	if resp.StatusCode > 499 {
-		err = decodeError(resp)
-		return nil, err
-	} else if resp.StatusCode > 399 {
+	if resp.StatusCode > 399 {
 		err = decodeError(resp)
 		return nil, err
 	}

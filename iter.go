@@ -1,5 +1,7 @@
 package duffel
 
+// Iter is an iterator for a list of items.
+// Based on the iterator used in https://github.com/stripe/stripe-go
 type Iter[T any] struct {
 	cur      *T
 	err      error

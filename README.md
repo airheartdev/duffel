@@ -42,6 +42,17 @@ if iter.Err() != nil {
 }
 ```
 
+We've added a convenience method to collect all items from the iterator into a single slice in one go:
+
+```go
+airports, err := duffel.Collect(iter)
+if err != nil  {
+  // Handle error from iter.Err()
+}
+
+// airports is a []*duffel.Airport
+```
+
 ### Error Handling
 
 Each API method returns an error or an iterator that returns errors at each iteration. If an error is returned from Duffel, it will be of type `DuffelError` and expose more details on how to handle it.
@@ -80,6 +91,9 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [ ] Order Change Requests
 - [ ] Order Change Offers
 - [ ] Order Changes
+- [x] Airports
+- [ ] Airlines
+- [ ] Equipment
 
 ## License
 

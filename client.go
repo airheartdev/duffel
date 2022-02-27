@@ -10,6 +10,7 @@ import (
 	"net/url"
 
 	"github.com/segmentio/encoding/json"
+	"moul.io/http2curl"
 )
 
 type Payload[T any] struct {
@@ -73,6 +74,13 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 				return nil, err
 			}
 		}
+	}
+
+	// When debugging is enabled, print the curl command to mimic this request
+	if c.debug {
+		command, _ := http2curl.GetCurlCommand(req)
+		fmt.Println("DEBUG using curl command:")
+		fmt.Printf("%s -s | gunzip -d | jq\n", command)
 	}
 
 	resp, err := c.httpDoer.Do(req)

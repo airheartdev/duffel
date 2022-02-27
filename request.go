@@ -3,7 +3,6 @@ package duffel
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -21,6 +20,11 @@ func newInternalClient[Req any, Resp any](a *API) *client[Req, Resp] {
 		APIToken: a.APIToken,
 		limiter:  rate.NewLimiter(rate.Every(1*time.Second), 5),
 	}
+}
+
+func (c *client[R, W]) Debug() *client[R, W] {
+	c.debug = true
+	return c
 }
 
 // Get makes a GET request to the specified resource.
@@ -168,7 +172,6 @@ func WithRequestPagination(meta *ListMeta) RequestOption {
 			if err != nil {
 				return (err)
 			}
-			log.Println(q.Encode())
 			req.URL.RawQuery = q.Encode()
 		}
 		return nil

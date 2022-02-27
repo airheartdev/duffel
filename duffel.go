@@ -206,6 +206,7 @@ type (
 		options   *Options
 		limiter   *rate.Limiter
 		rateLimit *RateLimit
+		debug     bool
 	}
 
 	API struct {

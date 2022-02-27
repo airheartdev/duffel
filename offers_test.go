@@ -10,6 +10,7 @@ import (
 )
 
 func TestListOffers(t *testing.T) {
+	defer gock.Off()
 	a := assert.New(t)
 	gock.New("https://api.duffel.com").
 		Get("/air/offers").

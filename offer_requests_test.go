@@ -10,6 +10,7 @@ import (
 )
 
 func TestCreateOffersRequest(t *testing.T) {
+	defer gock.Off()
 	a := assert.New(t)
 	gock.New("https://api.duffel.com").
 		Post("/air/offer_requests").
@@ -61,6 +62,7 @@ func TestCreateOffersRequest(t *testing.T) {
 }
 
 func TestGetOfferRequest(t *testing.T) {
+	defer gock.Off()
 	a := assert.New(t)
 	gock.New("https://api.duffel.com").
 		Get("/air/offer_requests/orq_0000AEtEexyvXbB0OhB5jk").
@@ -90,6 +92,7 @@ func TestGetOfferRequest(t *testing.T) {
 }
 
 func TestListOfferRequests(t *testing.T) {
+	defer gock.Off()
 	a := assert.New(t)
 	gock.New("https://api.duffel.com").
 		Get("/air/offer_requests").

@@ -191,8 +191,7 @@ func listOffersAction(c *cli.Context) error {
 
 	for iter.Next() {
 		offer := iter.Current()
-		log.Printf("Offer: %s", offer.ID)
-		log.Println(offer.ID, offer.Owner.Name)
+		fmt.Printf("===> Offer: %s %s\n", offer.ID, offer.Owner.Name)
 	}
 
 	return iter.Err()

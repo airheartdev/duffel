@@ -48,7 +48,7 @@ type (
 )
 
 func (a *API) CreateOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error) {
-	client := newInternalClient[OfferRequestInput, OfferRequest](a).Debug()
+	client := newInternalClient[OfferRequestInput, OfferRequest](a)
 	return client.makeRequestWithPayload(ctx,
 		"/air/offer_requests",
 		http.MethodPost,

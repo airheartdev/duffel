@@ -179,8 +179,9 @@ type (
 		UpdateOrder(ctx context.Context, id string, params OrderUpdateParams) (*Order, error)
 
 		// List orders.
-		ListOrders(ctx context.Context, params ...ListOrdersParams) Iter[*Order]
+		ListOrders(ctx context.Context, params ...ListOrdersParams) *Iter[Order]
 
+		// Create an order.
 		CreateOrder(ctx context.Context, input CreateOrderInput) (*Order, error)
 	}
 )
@@ -199,10 +200,20 @@ func (a *API) CreateOrder(ctx context.Context, input CreateOrderInput) (*Order, 
 	return c.makeRequestWithPayload(ctx, "/air/orders", http.MethodPost, &input)
 }
 
+func (a *API) UpdateOrder(ctx context.Context, id string, params OrderUpdateParams) (*Order, error) {
+	c := newInternalClient[OrderUpdateParams, Order](a)
+	return c.makeRequestWithPayload(ctx, "/air/orders/"+id, http.MethodPatch, &params)
+}
+
 // CreateOrder creates a new order.
 func (a *API) GetOrder(ctx context.Context, id string) (*Order, error) {
 	c := newInternalClient[CreateOrderInput, Order](a)
 	return c.makeRequestWithPayload(ctx, "/air/orders/"+id, http.MethodGet, nil)
+}
+
+func (a *API) ListOrders(ctx context.Context, params ...ListOrdersParams) *Iter[Order] {
+	c := newInternalClient[ListOrdersParams, Order](a)
+	return c.getIterator(ctx, http.MethodGet, "/air/orders")
 }
 
 func (o *Order) BaseAmount() *currency.Amount {

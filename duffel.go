@@ -15,6 +15,7 @@ type (
 		OfferRequestClient
 		OfferClient
 		OrderClient
+		OrderChangeClient
 		SeatmapClient
 		AirportsClient
 		AirlinesClient

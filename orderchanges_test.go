@@ -68,3 +68,29 @@ func TestCreateOrderChangeRequest(t *testing.T) {
 	a.Equal(false, order.LiveMode)
 	a.Len(order.OrderChangeOffers, 1)
 }
+
+func TestGetOrderChangeRequest(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("https://api.duffel.com").
+		Get("/api/order_change_requests/ocr_0000A3bQP9RLVfNUcdpLpw").
+		Reply(200).
+		SetHeader("Ratelimit-Limit", "5").
+		SetHeader("Ratelimit-Remaining", "5").
+		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
+		SetHeader("Date", time.Now().Format(time.RFC1123)).
+		File("fixtures/200-get-order-change-request.json")
+
+	a := assert.New(t)
+
+	ctx := context.TODO()
+	client := New("duffel_test_123")
+
+	data, err := client.GetOrderChangeRequest(ctx, "ocr_0000A3bQP9RLVfNUcdpLpw")
+	a.NoError(err)
+	a.Equal("ocr_0000A3bQP9RLVfNUcdpLpw", data.ID)
+	a.Equal("ord_0000A3bQ8FJIQoEfuC07n6", data.OrderID)
+	a.Equal("35.50 GBP", data.OrderChangeOffers[0].NewTotalAmount().String())
+	a.Equal("10.50 GBP", data.OrderChangeOffers[0].PenaltyTotalAmount().String())
+	a.Equal("90.80 GBP", data.OrderChangeOffers[0].ChangeTotalAmount().String())
+}

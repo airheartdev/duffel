@@ -102,3 +102,19 @@ func (o *OrderChangeOffer) ChangeTotalAmount() currency.Amount {
 	}
 	return amount
 }
+
+func (o *OrderChangeOffer) NewTotalAmount() currency.Amount {
+	amount, err := currency.NewAmount(o.RawNewTotalAmount, o.RawNewTotalCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
+}
+
+func (o *OrderChangeOffer) PenaltyTotalAmount() currency.Amount {
+	amount, err := currency.NewAmount(o.RawPenaltyTotalAmount, o.RawPenaltyTotalCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
+}

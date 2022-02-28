@@ -27,7 +27,7 @@ client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
 
 For available methods, see:
 
-- [Documentation](https://pkg.go.dev/github.com/airheartdev/duffel#section-documentation)
+- [GoDoc Documentation](https://pkg.go.dev/github.com/airheartdev/duffel#section-documentation)
 - [Duffel API reference](https://duffel.com/docs/api/overview/welcome)
 
 And familiarise yourself with the implementation notes:

@@ -121,26 +121,32 @@ type (
 	}
 
 	OrderPassenger struct {
-		ID         string         `json:"id"`
-		Title      PassengerTitle `json:"title"`
-		FamilyName string         `json:"family_name"`
-		GivenName  string         `json:"given_name"`
-		BornOn     Date           `json:"born_on"`
-		Email      string         `json:"email"`
-		Gender     Gender         `json:"gender"`
+		// ID is id of the passenger, returned when the offer request was created
+		ID string `json:"id"`
+		// Title is passengers' title. Possible values: "mr", "ms", "mrs", or "miss"
+		Title PassengerTitle `json:"title"`
+		// FamilyName is the family name of the passenger.
+		FamilyName string `json:"family_name"`
+		// GivenName is the passenger's given name.
+		GivenName string `json:"given_name"`
+		// BornOn is the passengers DoB according to their travel documents.
+		BornOn Date `json:"born_on"`
+		// Email is the passengers email address.
+		Email string `json:"email"`
+		// Gender is the passengers gender.
+		Gender Gender `json:"gender"`
 		// The passenger's identity documents. You may only provide one identity document per passenger.
 		IdentityDocuments []IdentityDocument `json:"identity_documents,omitempty"`
-
 		// The `id` of the infant associated with this passenger
 		InfantPassengerID string `json:"infant_passenger_id,omitempty"`
-
 		// The Loyalty Programme Accounts for this passenger
 		LoyaltyProgrammeAccounts []LoyaltyProgrammeAccount `json:"loyalty_programme_accounts,omitempty"`
-
 		// (Required) The passenger's phone number in E.164 (international) format
 		PhoneNumber string `json:"phone_number"`
 
-		// deprecated
+		// Type is the type of passenger. This field is deprecated.
+		// @Deprecated
+		// Possible values: "adult", "child", or "infant_without_seat"
 		Type PassengerType `json:"type"`
 	}
 

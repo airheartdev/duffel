@@ -2,10 +2,11 @@ package duffel
 
 import (
 	"context"
-	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/bojanz/currency"
+	"github.com/gorilla/schema"
 )
 
 const orderIDPrefix = "ord_"
@@ -196,24 +197,23 @@ const (
 
 // CreateOrder creates a new order.
 func (a *API) CreateOrder(ctx context.Context, input CreateOrderInput) (*Order, error) {
-	c := newInternalClient[CreateOrderInput, Order](a)
-	return c.makeRequestWithPayload(ctx, "/air/orders", http.MethodPost, &input)
+	return newRequestWithAPI[CreateOrderInput, Order](a).Post("/air/orders", &input).One(ctx)
 }
 
 func (a *API) UpdateOrder(ctx context.Context, id string, params OrderUpdateParams) (*Order, error) {
-	c := newInternalClient[OrderUpdateParams, Order](a)
-	return c.makeRequestWithPayload(ctx, "/air/orders/"+id, http.MethodPatch, &params)
+	return newRequestWithAPI[OrderUpdateParams, Order](a).Patch("/air/orders/"+id, &params).One(ctx)
 }
 
 // CreateOrder creates a new order.
 func (a *API) GetOrder(ctx context.Context, id string) (*Order, error) {
-	c := newInternalClient[CreateOrderInput, Order](a)
-	return c.makeRequestWithPayload(ctx, "/air/orders/"+id, http.MethodGet, nil)
+	return newRequestWithAPI[EmptyPayload, Order](a).Get("/air/orders/" + id).One(ctx)
 }
 
 func (a *API) ListOrders(ctx context.Context, params ...ListOrdersParams) *Iter[Order] {
-	c := newInternalClient[ListOrdersParams, Order](a)
-	return c.getIterator(ctx, http.MethodGet, "/air/orders")
+	return newRequestWithAPI[ListOrdersParams, Order](a).
+		Get("/air/orders").
+		WithParams(normalizeParams(params)...).
+		All(ctx)
 }
 
 func (o *Order) BaseAmount() *currency.Amount {
@@ -264,4 +264,10 @@ func (s *Service) TotalAmount() currency.Amount {
 		return currency.Amount{}
 	}
 	return amount
+}
+
+func (o ListOrdersParams) Encode(q url.Values) error {
+	enc := schema.NewEncoder()
+	enc.SetAliasTag("url")
+	return enc.Encode(o, q)
 }

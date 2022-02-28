@@ -26,8 +26,11 @@ func TestCreateOrder(t *testing.T) {
 	defer gock.Off()
 	a := assert.New(t)
 
+	// gock.Observe(gock.DumpRequest)
+
 	gock.New("https://api.duffel.com").
 		Post("/air/orders").
+		File("fixtures/201-create-order-input.json").
 		Reply(201).
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
@@ -37,7 +40,46 @@ func TestCreateOrder(t *testing.T) {
 
 	ctx := context.TODO()
 	client := New("duffel_test_123")
-	order, err := client.CreateOrder(ctx, CreateOrderInput{})
+	order, err := client.CreateOrder(ctx, CreateOrderInput{
+		Type:     OrderTypeInstant,
+		Metadata: Metadata{"seat_preference": "isle", "meal_preference": "NLML", "payment_intent_id": "pit_00009htYpSCXrwaB9DnUm2"},
+		Services: []ServiceCreateInput{
+			{
+				ID:       "ase_00009hj8USM7Ncg31cB123",
+				Quantity: 1,
+			},
+		},
+		SelectedOffers: []string{"off_00009htyDGjIfajdNBZRlw"},
+		Payments: []PaymentCreateInput{
+			{
+				Type:     "balance",
+				Currency: "GBP",
+				Amount:   "30.20",
+			},
+		},
+		Passengers: []OrderPassenger{
+			{
+				Type:              PassengerTypeAdult,
+				ID:                "pas_00009hj8USM7Ncg31cBCLL",
+				Title:             PassengerTitleMrs,
+				FamilyName:        "Earhart",
+				GivenName:         "Amelia",
+				BornOn:            Date(time.Date(1987, time.July, 24, 0, 0, 0, 0, time.UTC)),
+				Gender:            GenderFemale,
+				InfantPassengerID: "pas_00009hj8USM8Ncg32aTGHL",
+				PhoneNumber:       "+442080160509",
+				Email:             "amelia@duffel.com",
+				IdentityDocuments: []IdentityDocument{
+					{
+						UniqueIdentifier:   "19KL56147",
+						ExpiresOn:          Date(time.Date(2025, time.April, 25, 0, 0, 0, 0, time.UTC)),
+						IssuingCountryCode: "GB",
+						Type:               "passport",
+					},
+				},
+			},
+		},
+	})
 	a.NoError(err)
 	a.Equal("RZPNX8", order.BookingReference)
 	a.Equal("ord_00009hthhsUZ8W4LxQgkjo", order.ID)

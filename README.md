@@ -120,4 +120,4 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 
 ## License
 
-MIT.
+MIT License

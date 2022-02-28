@@ -13,7 +13,6 @@ import (
 type RequestBuilder[Req any, Resp any] struct {
 	client         *client[Req, Resp]
 	method         string
-	host           string
 	resourcePath   string
 	requestOptions []RequestOption
 	body           *Req
@@ -94,15 +93,8 @@ func WithURLParam(key, value string) RequestOption {
 func newRequestWithAPI[ReqT any, ResponseT any](a *API) *RequestBuilder[ReqT, ResponseT] {
 	return &RequestBuilder[ReqT, ResponseT]{
 		client: newInternalClient[ReqT, ResponseT](a),
-		host:   defaultHost,
 		method: http.MethodGet,
 	}
-}
-
-// Host sets the host to an alternate host to duffel.DefaultHost
-func (r *RequestBuilder[Req, Resp]) Host(host string) *RequestBuilder[Req, Resp] {
-	r.host = host
-	return r
 }
 
 // WithParam adds a single query param to the URL.

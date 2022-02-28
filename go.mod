@@ -8,6 +8,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rickb777/date v1.17.0
 	github.com/stretchr/testify v1.2.2
+	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/time v0.0.0-20220224211638-0e9765cccd65
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
@@ -17,9 +18,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	github.com/urfave/cli/v2 v2.3.0 // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
-	moul.io/http2curl v1.0.0 // indirect
 )
 
 require (

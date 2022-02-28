@@ -2,7 +2,6 @@ package duffel
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/bojanz/currency"
 )
@@ -98,8 +97,10 @@ func (e ElementType) String() string {
 }
 
 func (a *API) GetSeatmaps(ctx context.Context, offerID string) *Iter[Seatmap] {
-	c := newInternalClient[EmptyPayload, Seatmap](a)
-	return c.getIterator(ctx, http.MethodGet, "/air/seat_maps", WithURLParam("offer_id", offerID))
+	return newRequestWithAPI[EmptyPayload, Seatmap](a).
+		Get("/air/seat_maps").
+		WithParam("offer_id", offerID).
+		All(ctx)
 }
 
 func (s *SectionService) TotalAmount() currency.Amount {

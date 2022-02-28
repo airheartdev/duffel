@@ -105,8 +105,8 @@ const (
 )
 
 type DuffelError struct {
-	Meta   Meta    `json:"meta"`
-	Errors []Error `json:"errors"`
+	Meta   ErrorMeta `json:"meta"`
+	Errors []Error   `json:"errors"`
 }
 
 func (e *DuffelError) Error() string {
@@ -139,17 +139,7 @@ type Error struct {
 	Code             ErrorCode `json:"code"`
 }
 
-type Meta struct {
+type ErrorMeta struct {
 	Status    int64  `json:"status"`
 	RequestID string `json:"request_id"`
 }
-
-type DuffelErr error
-
-var ErrNotFound DuffelErr = fmt.Errorf("duffel: not found")
-
-func buildError(e Error) InvalidRequestErr {
-	return InvalidRequestErr(fmt.Errorf("duffel: %s", e.Message))
-}
-
-type InvalidRequestErr DuffelErr

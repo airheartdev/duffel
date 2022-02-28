@@ -78,7 +78,7 @@ func (a *API) GetOrderChangeRequest(ctx context.Context, orderChangeRequestID st
 		return nil, fmt.Errorf("orderChangeRequestID should begin with %s", orderChangeRequestIDPrefix)
 	}
 
-	builder := newRequestWithAPI[EmptyPayload, OrderChangeRequest](a)
-	return builder.Get(fmt.Sprintf("/api/order_change_requests/%s", orderChangeRequestID)).One(ctx)
-	return nil, nil
+	return newRequestWithAPI[EmptyPayload, OrderChangeRequest](a).
+		Get(fmt.Sprintf("/api/order_change_requests/%s", orderChangeRequestID)).
+		One(ctx)
 }

@@ -13,7 +13,9 @@ type (
 )
 
 func (a *API) ListAirlines(ctx context.Context) *Iter[Airline] {
-	return newRequestWithAPI[EmptyPayload, Airline](a).Get("/air/airlines").All(ctx)
+	return newRequestWithAPI[EmptyPayload, Airline](a).
+		Get("/air/airlines").
+		All(ctx)
 }
 
 func (a *API) GetAirline(ctx context.Context, id string) (*Airline, error) {

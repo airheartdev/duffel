@@ -144,11 +144,4 @@ func parseJSONBytesToString(b []byte) (string, error) {
 	}
 
 	return string(b), nil
-
-	// str := string(b)
-	// if str == "null" {
-	// 	return "", ErrNullValue
-	// }
-
-	// return strconv.Unquote(str)
 }

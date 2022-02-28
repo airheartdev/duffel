@@ -50,18 +50,18 @@ type (
 )
 
 func (a *API) CreateOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error) {
-	return NewRequestWithAPI[OfferRequestInput, OfferRequest](a).
+	return newRequestWithAPI[OfferRequestInput, OfferRequest](a).
 		Post("/air/offer_requests", &requestInput).
 		WithParams(requestInput).
 		One(ctx)
 }
 
 func (a *API) GetOfferRequest(ctx context.Context, id string) (*OfferRequest, error) {
-	return NewRequestWithAPI[EmptyPayload, OfferRequest](a).Get(fmt.Sprintf("/air/offer_requests/%s", id)).One(ctx)
+	return newRequestWithAPI[EmptyPayload, OfferRequest](a).Get(fmt.Sprintf("/air/offer_requests/%s", id)).One(ctx)
 }
 
 func (a *API) ListOfferRequests(ctx context.Context) *Iter[OfferRequest] {
-	return NewRequestWithAPI[EmptyPayload, OfferRequest](a).Get("/air/offer_requests").All(ctx)
+	return newRequestWithAPI[EmptyPayload, OfferRequest](a).Get("/air/offer_requests").All(ctx)
 }
 
 // Encode implements the ParamEncoder interface.

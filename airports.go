@@ -18,14 +18,14 @@ type (
 )
 
 func (a *API) ListAirports(ctx context.Context, params ...ListAirportsParams) *Iter[Airport] {
-	return NewRequestWithAPI[ListAirportsParams, Airport](a).
+	return newRequestWithAPI[ListAirportsParams, Airport](a).
 		Get("/air/airports").
 		WithParams(normalizeParams(params)...).
 		All(ctx)
 }
 
 func (a *API) GetAirport(ctx context.Context, id string) (*Airport, error) {
-	return NewRequestWithAPI[EmptyPayload, Airport](a).Get(fmt.Sprintf("/air/airports/%s", id)).One(ctx)
+	return newRequestWithAPI[EmptyPayload, Airport](a).Get(fmt.Sprintf("/air/airports/%s", id)).One(ctx)
 }
 
 func (p ListAirportsParams) Encode(q url.Values) error {

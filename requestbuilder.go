@@ -86,12 +86,12 @@ func WithURLParam(key, value string) RequestOption {
 	}
 }
 
-// NewRequestWithAPI returns a new fluent requst builder for the given API.
+// newRequestWithAPI returns a new fluent requst builder for the given API.
 // The input types are the request payload and response payload.
 // For Get requests, the request payload is used to type the URL params.
 //
 // The response payload is used to type the parsed response body, and is the type returned by the finalizers.
-func NewRequestWithAPI[ReqT any, ResponseT any](a *API) *RequestBuilder[ReqT, ResponseT] {
+func newRequestWithAPI[ReqT any, ResponseT any](a *API) *RequestBuilder[ReqT, ResponseT] {
 	return &RequestBuilder[ReqT, ResponseT]{
 		client: newInternalClient[ReqT, ResponseT](a),
 		host:   defaultHost,

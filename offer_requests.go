@@ -2,7 +2,9 @@ package duffel
 
 import (
 	"context"
-	"net/http"
+	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -48,21 +50,22 @@ type (
 )
 
 func (a *API) CreateOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error) {
-	client := newInternalClient[OfferRequestInput, OfferRequest](a)
-	return client.makeRequestWithPayload(ctx,
-		"/air/offer_requests",
-		http.MethodPost,
-		&requestInput,
-		WithURLParams(requestInput),
-	)
+	return NewRequestWithAPI[OfferRequestInput, OfferRequest](a).
+		Post("/air/offer_requests", &requestInput).
+		WithParams(requestInput).
+		One(ctx)
 }
 
 func (a *API) GetOfferRequest(ctx context.Context, id string) (*OfferRequest, error) {
-	c := newInternalClient[OfferRequestInput, OfferRequest](a)
-	return c.makeRequestWithPayload(ctx, "/air/offer_requests/"+id, http.MethodGet, nil)
+	return NewRequestWithAPI[EmptyPayload, OfferRequest](a).Get(fmt.Sprintf("/air/offer_requests/%s", id)).One(ctx)
 }
 
 func (a *API) ListOfferRequests(ctx context.Context) *Iter[OfferRequest] {
-	c := newInternalClient[ListAirportsParams, OfferRequest](a)
-	return c.getIterator(ctx, http.MethodGet, "/air/offer_requests")
+	return NewRequestWithAPI[EmptyPayload, OfferRequest](a).Get("/air/offer_requests").All(ctx)
+}
+
+// Encode implements the ParamEncoder interface.
+func (o OfferRequestInput) Encode(q url.Values) error {
+	q.Set("return_offers", strconv.FormatBool(o.ReturnOffers))
+	return nil
 }

@@ -2,24 +2,22 @@ package duffel
 
 import (
 	"context"
-	"net/http"
+	"fmt"
 )
 
 type (
 	AircraftClient interface {
-		ListAircraft(ctx context.Context, params ...ListAirportsParams) *Iter[Aircraft]
+		ListAircraft(ctx context.Context) *Iter[Aircraft]
 		GetAircraft(ctx context.Context, id string) (*Aircraft, error)
 	}
 )
 
-func (a *API) ListAircraft(ctx context.Context, params ...ListAirportsParams) *Iter[Aircraft] {
-	c := newInternalClient[struct{}, Aircraft](a)
-	return c.getIterator(ctx, http.MethodGet, "/air/aircraft", WithURLParams(params...))
+func (a *API) ListAircraft(ctx context.Context) *Iter[Aircraft] {
+	return NewRequestWithAPI[ListAirportsParams, Aircraft](a).Get("/air/aircraft").All(ctx)
 }
 
 func (a *API) GetAircraft(ctx context.Context, id string) (*Aircraft, error) {
-	c := newInternalClient[struct{}, Aircraft](a)
-	return c.makeRequestWithPayload(ctx, "/air/aircraft/"+id, http.MethodGet, nil)
+	return NewRequestWithAPI[EmptyPayload, Aircraft](a).Get(fmt.Sprintf("/air/aircraft/%s", id)).One(ctx)
 }
 
 var _ AircraftClient = (*API)(nil)

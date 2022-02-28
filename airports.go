@@ -2,7 +2,8 @@ package duffel
 
 import (
 	"context"
-	"net/http"
+	"fmt"
+	"net/url"
 )
 
 type (
@@ -17,13 +18,21 @@ type (
 )
 
 func (a *API) ListAirports(ctx context.Context, params ...ListAirportsParams) *Iter[Airport] {
-	c := newInternalClient[struct{}, Airport](a)
-	return c.getIterator(ctx, http.MethodGet, "/air/airports", WithURLParams(params...))
+	return NewRequestWithAPI[ListAirportsParams, Airport](a).
+		Get("/air/airports").
+		WithParams(normalizeParams(params)...).
+		All(ctx)
 }
 
 func (a *API) GetAirport(ctx context.Context, id string) (*Airport, error) {
-	c := newInternalClient[struct{}, Airport](a)
-	return c.makeRequestWithPayload(ctx, "/air/airports/"+id, http.MethodGet, nil)
+	return NewRequestWithAPI[EmptyPayload, Airport](a).Get(fmt.Sprintf("/air/airports/%s", id)).One(ctx)
+}
+
+func (p ListAirportsParams) Encode(q url.Values) error {
+	if p.IATACountryCode != "" {
+		q.Set("iata_country_code", p.IATACountryCode)
+	}
+	return nil
 }
 
 var _ AirportsClient = (*API)(nil)

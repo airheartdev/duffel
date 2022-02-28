@@ -14,6 +14,7 @@ func TestCreateOffersRequest(t *testing.T) {
 	a := assert.New(t)
 	gock.New("https://api.duffel.com").
 		Post("/air/offer_requests").
+		MatchParam("return_offers", "true").
 		Reply(200).
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
@@ -96,6 +97,7 @@ func TestListOfferRequests(t *testing.T) {
 	a := assert.New(t)
 	gock.New("https://api.duffel.com").
 		Get("/air/offer_requests").
+		// MatchParam("return_offers", "true").
 		Reply(200).
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").

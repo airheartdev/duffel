@@ -110,8 +110,8 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [x] Orders
 - [ ] Payments
 - [x] Seat Maps
-- [ ] Order Cancellations
-- [ ] Order Change Requests
+- [x] Order Cancellations
+- [x] Order Change Requests
 - [ ] Order Change Offers
 - [ ] Order Changes
 - [x] Airports

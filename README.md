@@ -18,7 +18,117 @@ See the [examples/\*](/examples/) directory
 
 ## Usage
 
-_TBD_
+### func \(\*API\) CreateOfferRequest
+
+```go
+func (a *API) CreateOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error)
+```
+
+### func \(\*API\) CreateOrder
+
+```go
+func (a *API) CreateOrder(ctx context.Context, input CreateOrderInput) (*Order, error)
+```
+
+CreateOrder creates a new order\.
+
+### func \(\*API\) GetAircraft
+
+```go
+func (a *API) GetAircraft(ctx context.Context, id string) (*Aircraft, error)
+```
+
+### func \(\*API\) GetAirline
+
+```go
+func (a *API) GetAirline(ctx context.Context, id string) (*Airline, error)
+```
+
+### func \(\*API\) GetAirport
+
+```go
+func (a *API) GetAirport(ctx context.Context, id string) (*Airport, error)
+```
+
+### func \(\*API\) GetOffer
+
+```go
+func (a *API) GetOffer(ctx context.Context, id string) (*Offer, error)
+```
+
+GetOffer gets a single offer by ID\.
+
+### func \(\*API\) GetOfferRequest
+
+```go
+func (a *API) GetOfferRequest(ctx context.Context, id string) (*OfferRequest, error)
+```
+
+### func \(\*API\) GetOrder
+
+```go
+func (a *API) GetOrder(ctx context.Context, id string) (*Order, error)
+```
+
+CreateOrder creates a new order\.
+
+### func \(\*API\) GetSeatmaps
+
+```go
+func (a *API) GetSeatmaps(ctx context.Context, offerID string) *Iter[Seatmap]
+```
+
+### func \(\*API\) ListAircraft
+
+```go
+func (a *API) ListAircraft(ctx context.Context, params ...ListAirportsParams) *Iter[Aircraft]
+```
+
+### func \(\*API\) ListAirlines
+
+```go
+func (a *API) ListAirlines(ctx context.Context, params ...ListAirportsParams) *Iter[Airline]
+```
+
+### func \(\*API\) ListAirports
+
+```go
+func (a *API) ListAirports(ctx context.Context, params ...ListAirportsParams) *Iter[Airport]
+```
+
+### func \(\*API\) ListOfferRequests
+
+```go
+func (a *API) ListOfferRequests(ctx context.Context) *Iter[OfferRequest]
+```
+
+### func \(\*API\) ListOffers
+
+```go
+func (a *API) ListOffers(ctx context.Context, offerRequestId string, options ...ListOffersParams) *Iter[Offer]
+```
+
+ListOffers lists all the offers for an offer request\. Returns an iterator\.
+
+### func \(\*API\) ListOrders
+
+```go
+func (a *API) ListOrders(ctx context.Context, params ...ListOrdersParams) *Iter[Order]
+```
+
+### func \(\*API\) UpdateOfferPassenger
+
+```go
+func (a *API) UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input *PassengerUpdateInput) (*OfferRequestPassenger, error)
+```
+
+UpdateOfferPassenger updates a single offer passenger\.
+
+### func \(\*API\) UpdateOrder
+
+```go
+func (a *API) UpdateOrder(ctx context.Context, id string, params OrderUpdateParams) (*Order, error)
+```
 
 ### Monetary amounts
 

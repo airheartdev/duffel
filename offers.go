@@ -101,3 +101,5 @@ func (o GetOfferParams) Encode(q url.Values) error {
 	}
 	return nil
 }
+
+var _ OfferClient = (*API)(nil)

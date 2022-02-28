@@ -3,16 +3,19 @@ package duffel
 import (
 	"context"
 	"fmt"
-	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
 
+const offerIDPrefix = "off_"
+const offerRequestIDPrefix = "orq_"
+
 type (
 	OfferClient interface {
-		UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input *PassengerUpdateInput) (*OfferRequestPassenger, error)
+		UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input PassengerUpdateInput) (*OfferRequestPassenger, error)
 		ListOffers(ctx context.Context, reqId string, options ...ListOffersParams) *Iter[Offer]
-		GetOffer(ctx context.Context, id string) (*Offer, error)
+		GetOffer(ctx context.Context, id string, params ...GetOfferParams) (*Offer, error)
 	}
 
 	Offer struct {
@@ -37,6 +40,10 @@ type (
 		Sort           ListOffersSortParam `url:"sort,omitempty"`
 		MaxConnections int                 `url:"max_connections,omitempty"`
 	}
+
+	GetOfferParams struct {
+		ReturnAvailableServices bool
+	}
 )
 
 const (
@@ -45,28 +52,52 @@ const (
 )
 
 // UpdateOfferPassenger updates a single offer passenger.
-func (a *API) UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input *PassengerUpdateInput) (*OfferRequestPassenger, error) {
-	client := newInternalClient[PassengerUpdateInput, OfferRequestPassenger](a)
+func (a *API) UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input PassengerUpdateInput) (*OfferRequestPassenger, error) {
 	url := fmt.Sprintf("/air/offers/%s/passengers/%s", offerRequestID, passengerID)
-	return client.makeRequestWithPayload(ctx, url, http.MethodPatch, input)
+	return newRequestWithAPI[PassengerUpdateInput, OfferRequestPassenger](a).Patch(url, &input).One(ctx)
 }
 
 // ListOffers lists all the offers for an offer request. Returns an iterator.
-func (a *API) ListOffers(ctx context.Context, offerRequestId string, options ...ListOffersParams) *Iter[Offer] {
-	if offerRequestId == "" {
+func (a *API) ListOffers(ctx context.Context, offerRequestID string, options ...ListOffersParams) *Iter[Offer] {
+	if offerRequestID == "" {
 		return ErrIter[Offer](fmt.Errorf("offerRequestId param is required"))
-	} else if !strings.HasPrefix(offerRequestId, "orq_") {
-		return ErrIter[Offer](fmt.Errorf("offerRequestId should begin with orq_"))
+	} else if !strings.HasPrefix(offerRequestID, offerRequestIDPrefix) {
+		return ErrIter[Offer](fmt.Errorf("offerRequestId should begin with %s", offerRequestIDPrefix))
 	}
 
-	c := newInternalClient[struct{}, Offer](a)
-	return c.getIterator(ctx, http.MethodGet, "/air/offers",
-		WithURLParam("offer_request_id", offerRequestId),
-		WithURLParams(options...))
+	return newRequestWithAPI[ListOffersParams, Offer](a).Get("/air/offers").
+		WithParam("offer_request_id", offerRequestID).
+		WithParams(normalizeParams(options)...).
+		All(ctx)
 }
 
 // GetOffer gets a single offer by ID.
-func (a *API) GetOffer(ctx context.Context, id string) (*Offer, error) {
-	c := newInternalClient[struct{}, Offer](a)
-	return c.makeRequestWithPayload(ctx, "/air/offers/"+id, http.MethodGet, nil)
+func (a *API) GetOffer(ctx context.Context, offerID string, params ...GetOfferParams) (*Offer, error) {
+	if !strings.HasPrefix(offerID, offerIDPrefix) {
+		return nil, fmt.Errorf("offerID should begin with %s", offerIDPrefix)
+	}
+
+	return newRequestWithAPI[GetOfferParams, Offer](a).
+		Get(fmt.Sprintf("/air/offers/%s", offerID)).
+		WithParams(normalizeParams(params)...).
+		One(ctx)
+}
+
+func (o ListOffersParams) Encode(q url.Values) error {
+	if o.Sort != "" {
+		q.Set("sort", string(o.Sort))
+	}
+
+	if o.MaxConnections != 0 {
+		q.Set("max_connections", fmt.Sprintf("%d", o.MaxConnections))
+	}
+
+	return nil
+}
+
+func (o GetOfferParams) Encode(q url.Values) error {
+	if o.ReturnAvailableServices {
+		q.Set("return_available_services", "true")
+	}
+	return nil
 }

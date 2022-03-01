@@ -167,7 +167,7 @@ type (
 		Currency string `json:"currency"`
 
 		// Possible values: "arc_bsp_cash" or "balance"
-		Type string `json:"type"`
+		Type PaymentMethod `json:"type"`
 	}
 
 	// The payment status for an order.
@@ -201,6 +201,8 @@ type (
 	PassengerTitle string
 
 	CabinClass string
+
+	PaymentMethod string
 
 	Offers []Offer
 
@@ -248,6 +250,12 @@ const (
 	PassengerTitleMs   PassengerTitle = "ms"
 	PassengerTitleMrs  PassengerTitle = "mrs"
 	PassengerTitleMiss PassengerTitle = "miss"
+
+	PaymentMethodBalance PaymentMethod = "balance"
+	ARCBSPCash           PaymentMethod = "arc_bsp_cash"
+	Card                 PaymentMethod = "card"
+	Voucher              PaymentMethod = "voucher"
+	AwaitingPayment      PaymentMethod = "awaiting_payment"
 )
 
 func New(apiToken string, opts ...Option) Duffel {
@@ -274,5 +282,21 @@ var (
 )
 
 func (p PassengerType) String() string {
+	return string(p)
+}
+
+func (p PaymentMethod) String() string {
+	return string(p)
+}
+
+func (p CabinClass) String() string {
+	return string(p)
+}
+
+func (p Gender) String() string {
+	return string(p)
+}
+
+func (p PassengerTitle) String() string {
 	return string(p)
 }

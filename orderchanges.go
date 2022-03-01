@@ -30,7 +30,7 @@ type (
 		ID                      string         `json:"id"`
 		OrderChangeID           string         `json:"order_change_id"`
 		Slices                  SliceChangeset `json:"slices"`
-		RefundTo                string         `json:"refund_to"`
+		RefundTo                PaymentMethod  `json:"refund_to"`
 		RawPenaltyTotalCurrency string         `json:"penalty_total_currency"`
 		RawPenaltyTotalAmount   string         `json:"penalty_total_amount"`
 		RawNewTotalCurrency     string         `json:"new_total_currency"`

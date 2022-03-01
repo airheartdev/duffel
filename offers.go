@@ -78,7 +78,7 @@ func (a *API) GetOffer(ctx context.Context, offerID string, params ...GetOfferPa
 	}
 
 	return newRequestWithAPI[GetOfferParams, Offer](a).
-		Get(fmt.Sprintf("/air/offers/%s", offerID)).
+		Getf("/air/offers/%s", offerID).
 		WithParams(normalizeParams(params)...).
 		One(ctx)
 }

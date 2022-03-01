@@ -2,6 +2,7 @@ package duffel
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -122,6 +123,11 @@ func (r *RequestBuilder[Req, Resp]) Get(path string, opts ...RequestOption) *Req
 	r.resourcePath = path
 	r.requestOptions = append(r.requestOptions, opts...)
 	return r
+}
+
+// Getf is like Get but accepts a format string and args.
+func (r *RequestBuilder[Req, Resp]) Getf(path string, a ...any) *RequestBuilder[Req, Resp] {
+	return r.Get(fmt.Sprintf(path, a...))
 }
 
 // Post sets the request method to POST, the request path to the given path, and the request payload to body. Global request options are applied.

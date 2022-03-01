@@ -2,7 +2,6 @@ package duffel
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 )
 
@@ -26,7 +25,7 @@ func (a *API) ListAirports(ctx context.Context, params ...ListAirportsParams) *I
 
 func (a *API) GetAirport(ctx context.Context, id string) (*Airport, error) {
 	return newRequestWithAPI[EmptyPayload, Airport](a).
-		Get(fmt.Sprintf("/air/airports/%s", id)).
+		Getf("/air/airports/%s", id).
 		One(ctx)
 }
 

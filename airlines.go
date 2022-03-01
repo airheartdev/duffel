@@ -2,7 +2,6 @@ package duffel
 
 import (
 	"context"
-	"fmt"
 )
 
 type (
@@ -20,7 +19,7 @@ func (a *API) ListAirlines(ctx context.Context) *Iter[Airline] {
 
 func (a *API) GetAirline(ctx context.Context, id string) (*Airline, error) {
 	return newRequestWithAPI[EmptyPayload, Airline](a).
-		Get(fmt.Sprintf("/air/airlines/%s", id)).
+		Getf("/air/airlines/%s", id).
 		One(ctx)
 }
 

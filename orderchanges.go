@@ -89,7 +89,7 @@ func (a *API) GetOrderChangeRequest(ctx context.Context, orderChangeRequestID st
 	}
 
 	return newRequestWithAPI[EmptyPayload, OrderChangeRequest](a).
-		Get(fmt.Sprintf("/api/order_change_requests/%s", orderChangeRequestID)).
+		Getf("/api/order_change_requests/%s", orderChangeRequestID).
 		One(ctx)
 }
 

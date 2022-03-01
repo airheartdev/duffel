@@ -68,7 +68,7 @@ func (a *API) GetOrderCancellation(ctx context.Context, orderCancellationID stri
 	}
 
 	return newRequestWithAPI[EmptyPayload, OrderCancellation](a).
-		Get(fmt.Sprintf("/air/order_cancellations/%s", orderCancellationID)).
+		Getf("/air/order_cancellations/%s", orderCancellationID).
 		One(ctx)
 }
 

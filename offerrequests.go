@@ -2,7 +2,6 @@ package duffel
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"strconv"
 	"time"
@@ -57,7 +56,7 @@ func (a *API) CreateOfferRequest(ctx context.Context, requestInput OfferRequestI
 }
 
 func (a *API) GetOfferRequest(ctx context.Context, id string) (*OfferRequest, error) {
-	return newRequestWithAPI[EmptyPayload, OfferRequest](a).Get(fmt.Sprintf("/air/offer_requests/%s", id)).One(ctx)
+	return newRequestWithAPI[EmptyPayload, OfferRequest](a).Getf("/air/offer_requests/%s", id).One(ctx)
 }
 
 func (a *API) ListOfferRequests(ctx context.Context) *Iter[OfferRequest] {

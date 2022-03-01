@@ -24,19 +24,16 @@ func TestCreateOffersRequest(t *testing.T) {
 
 	ctx := context.TODO()
 
-	age := 30
-
 	client := New("duffel_test_123")
 	data, err := client.CreateOfferRequest(ctx, OfferRequestInput{
 		Passengers: []OfferRequestPassenger{
 			{
 				FamilyName: "Earhardt",
 				GivenName:  "Amelia",
-				Age:        age,
 				Type:       PassengerTypeAdult,
 			},
 			{
-				Age: 1,
+				Age: 14,
 			},
 		},
 		CabinClass:   CabinClassEconomy,
@@ -52,10 +49,8 @@ func TestCreateOffersRequest(t *testing.T) {
 	a.NoError(err)
 	a.NotNil(data)
 
-	a.Equal("1390.66", data.Offers[0].TotalAmount)
-	a.Equal("GBP", data.Offers[0].TotalCurrency)
-	a.Equal("GBP", data.Offers[0].TaxCurrency)
-	a.Equal("116.08", data.Offers[0].TaxAmount)
+	a.Equal("1390.66 GBP", data.Offers[0].TotalAmount().String())
+	a.Equal("116.08 GBP", data.Offers[0].TaxAmount().String())
 	a.Len(data.Slices, 1)
 	a.Equal("2021-12-30", data.Slices[0].DepartureDate.String())
 	a.Equal("arp_jfk_us", data.Slices[0].Origin.ID)
@@ -80,10 +75,8 @@ func TestGetOfferRequest(t *testing.T) {
 	data, err := client.GetOfferRequest(ctx, "orq_0000AEtEexyvXbB0OhB5jk")
 	a.NoError(err)
 	a.NotNil(data)
-	a.Equal("1390.66", data.Offers[0].TotalAmount)
-	a.Equal("GBP", data.Offers[0].TotalCurrency)
-	a.Equal("GBP", data.Offers[0].TaxCurrency)
-	a.Equal("116.08", data.Offers[0].TaxAmount)
+	a.Equal("1390.66 GBP", data.Offers[0].TotalAmount().String())
+	a.Equal("116.08 GBP", data.Offers[0].TaxAmount().String())
 	a.Equal(false, data.Offers[0].LiveMode)
 	a.Equal("137", data.Offers[0].TotalEmissionsKg)
 	a.Equal(false, data.Offers[0].PassengerIdentityDocumentsRequired)

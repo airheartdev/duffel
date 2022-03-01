@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/bojanz/currency"
 )
 
 const offerIDPrefix = "off_"
@@ -24,10 +26,10 @@ type (
 		CreatedAt                          time.Time               `json:"created_at"`
 		UpdatedAt                          time.Time               `json:"updated_at"`
 		TotalEmissionsKg                   string                  `json:"total_emissions_kg"`
-		TotalCurrency                      string                  `json:"total_currency"`
-		TotalAmount                        string                  `json:"total_amount"`
-		TaxCurrency                        string                  `json:"tax_currency"`
-		TaxAmount                          string                  `json:"tax_amount"`
+		RawTotalCurrency                   string                  `json:"total_currency"`
+		RawTotalAmount                     string                  `json:"total_amount"`
+		RawTaxAmount                       string                  `json:"tax_amount"`
+		RawTaxCurrency                     string                  `json:"tax_currency"`
 		Owner                              Airline                 `json:"owner"`
 		Slices                             []Slice                 `json:"slices"`
 		Passengers                         []OfferRequestPassenger `json:"passengers"`
@@ -100,6 +102,22 @@ func (o GetOfferParams) Encode(q url.Values) error {
 		q.Set("return_available_services", "true")
 	}
 	return nil
+}
+
+func (o *Offer) TotalAmount() currency.Amount {
+	amount, err := currency.NewAmount(o.RawTotalAmount, o.RawTotalCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
+}
+
+func (o *Offer) TaxAmount() currency.Amount {
+	amount, err := currency.NewAmount(o.RawTaxAmount, o.RawTaxCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
 }
 
 var _ OfferClient = (*API)(nil)

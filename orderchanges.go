@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/bojanz/currency"
 )
@@ -46,9 +47,9 @@ type (
 		RawNewTotalAmount       string         `json:"new_total_amount"`
 		RawChangeTotalCurrency  string         `json:"change_total_currency"`
 		RawChangeTotalAmount    string         `json:"change_total_amount"`
-		ExpiresAt               string         `json:"expires_at"`
-		CreatedAt               string         `json:"created_at"`
-		UpdatedAt               string         `json:"updated_at"`
+		ExpiresAt               time.Time      `json:"expires_at"`
+		CreatedAt               time.Time      `json:"created_at"`
+		UpdatedAt               time.Time      `json:"updated_at"`
 		LiveMode                bool           `json:"live_mode"`
 	}
 

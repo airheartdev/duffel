@@ -11,7 +11,7 @@ import (
 
 func TestCreateOrderChangeRequest(t *testing.T) {
 	defer gock.Off()
-	gock.Observe(gock.DumpRequest)
+	// gock.Observe(gock.DumpRequest)
 
 	gock.New("https://api.duffel.com").
 		Post("/air/order_change_requests").
@@ -71,7 +71,7 @@ func TestCreateOrderChangeRequest(t *testing.T) {
 
 func TestGetOrderChangeRequest(t *testing.T) {
 	defer gock.Off()
-	gock.Observe(gock.DumpRequest)
+	// gock.Observe(gock.DumpRequest)
 
 	gock.New("https://api.duffel.com").
 		Get("/air/order_change_requests/ocr_0000A3bQP9RLVfNUcdpLpw").

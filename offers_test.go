@@ -65,7 +65,7 @@ func TestGetOfferByID(t *testing.T) {
 	})
 	a.NoError(err)
 	a.NotNil(data)
-	a.Equal("45.00", data.TotalAmount)
+	a.Equal("45.00 GBP", data.TotalAmount().String())
 	a.Len(data.Slices, 1)
 }
 

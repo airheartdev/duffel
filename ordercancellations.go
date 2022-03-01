@@ -21,15 +21,15 @@ type (
 	// returned to the original payment method (i.e. your Duffel balance).
 	// You'll then need to refund your customer (e.g. back to their credit/debit card).
 	OrderCancellation struct {
-		ID                string `json:"id"`
-		OrderID           string `json:"order_id"`
-		RefundTo          string `json:"refund_to"`
-		RawRefundCurrency string `json:"refund_currency"`
-		RawRefundAmount   string `json:"refund_amount"`
-		ExpiresAt         string `json:"expires_at"`
-		CreatedAt         string `json:"created_at"`
-		ConfirmedAt       string `json:"confirmed_at"`
-		LiveMode          bool   `json:"live_mode"`
+		ID                string        `json:"id"`
+		OrderID           string        `json:"order_id"`
+		RefundTo          PaymentMethod `json:"refund_to"`
+		RawRefundCurrency string        `json:"refund_currency"`
+		RawRefundAmount   string        `json:"refund_amount"`
+		ExpiresAt         string        `json:"expires_at"`
+		CreatedAt         string        `json:"created_at"`
+		ConfirmedAt       string        `json:"confirmed_at"`
+		LiveMode          bool          `json:"live_mode"`
 	}
 
 	OrderCancellationRequest struct {

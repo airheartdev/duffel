@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/gorilla/schema"
 	"github.com/pkg/errors"
@@ -134,7 +135,18 @@ func (r *RequestBuilder[Req, Resp]) Getf(path string, a ...any) *RequestBuilder[
 func (r *RequestBuilder[Req, Resp]) Post(path string, body *Req, opts ...RequestOption) *RequestBuilder[Req, Resp] {
 	r.method = http.MethodPost
 	r.resourcePath = path
+	r.body = body
 	r.requestOptions = append(r.requestOptions, opts...)
+	return r
+}
+
+func (r *RequestBuilder[Req, Resp]) Postf(path string, a ...any) *RequestBuilder[Req, Resp] {
+	r.method = http.MethodPost
+	r.resourcePath = fmt.Sprintf(path, a...)
+	return r
+}
+
+func (r *RequestBuilder[Req, Resp]) Body(body *Req) *RequestBuilder[Req, Resp] {
 	r.body = body
 	return r
 }
@@ -151,13 +163,16 @@ func (r *RequestBuilder[Req, Resp]) Patch(path string, body *Req, opts ...Reques
 // All finalizes the request and returns an iterator over the response.
 func (r *RequestBuilder[Req, Resp]) All(ctx context.Context) *Iter[Resp] {
 	return GetIter(func(lastMeta *ListMeta) (*List[Resp], error) {
+		ctx, cancel := context.WithDeadline(ctx, time.Now().Add(90*time.Second))
+		defer cancel()
+
 		list := new(List[Resp])
 		response, err := r.makeRequest(ctx, WithRequestPagination(lastMeta))
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "failed to make request")
 		}
-		container := new(ResponsePayload[[]*Resp])
 
+		container := new(ResponsePayload[[]*Resp])
 		err = decodeResponse(response, &container)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to decode response")
@@ -171,6 +186,9 @@ func (r *RequestBuilder[Req, Resp]) All(ctx context.Context) *Iter[Resp] {
 
 // One finalizes the request and returns a single item response.
 func (r *RequestBuilder[Req, Resp]) One(ctx context.Context) (*Resp, error) {
+	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(90*time.Second))
+	defer cancel()
+
 	response, err := r.makeRequest(ctx)
 	if err != nil {
 		return nil, err

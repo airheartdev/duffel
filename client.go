@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"time"
 
 	"github.com/segmentio/encoding/json"
 )
@@ -43,9 +42,6 @@ func encodePayload[T any](requestInput T) (io.ReadCloser, error) {
 }
 
 func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, method string, body io.ReadCloser, opts ...RequestOption) (*http.Response, error) {
-	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(90*time.Second))
-	defer cancel()
-
 	if c.APIToken == "" {
 		return nil, fmt.Errorf("duffel: missing API token")
 	}

@@ -113,9 +113,9 @@ type (
 		TimeZone        string    `json:"time_zone,omitempty"`
 		Longitude       *float64  `json:"longitude,omitempty"`
 		Latitude        *float64  `json:"latitude,omitempty"`
-		ICAOCode        *string   `json:"icao_code,omitempty"`
+		ICAOCode        string    `json:"icao_code,omitempty"`
 		IATACountryCode *string   `json:"iata_country_code,omitempty"`
-		IATACode        *string   `json:"iata_code,omitempty"`
+		IATACode        string    `json:"iata_code,omitempty"`
 		IATACityCode    *string   `json:"iata_city_code,omitempty"`
 		CityName        *string   `json:"city_name,omitempty"`
 		City            *Location `json:"city,omitempty"`
@@ -251,11 +251,12 @@ const (
 	PassengerTitleMrs  PassengerTitle = "mrs"
 	PassengerTitleMiss PassengerTitle = "miss"
 
-	PaymentMethodBalance PaymentMethod = "balance"
-	ARCBSPCash           PaymentMethod = "arc_bsp_cash"
-	Card                 PaymentMethod = "card"
-	Voucher              PaymentMethod = "voucher"
-	AwaitingPayment      PaymentMethod = "awaiting_payment"
+	PaymentMethodBalance  PaymentMethod = "balance"
+	ARCBSPCash            PaymentMethod = "arc_bsp_cash"
+	Card                  PaymentMethod = "card"
+	Voucher               PaymentMethod = "voucher"
+	AwaitingPayment       PaymentMethod = "awaiting_payment"
+	OriginalFormOfPayment PaymentMethod = "original_form_of_payment"
 )
 
 func New(apiToken string, opts ...Option) Duffel {

@@ -71,9 +71,10 @@ func TestCreateOrderChangeRequest(t *testing.T) {
 
 func TestGetOrderChangeRequest(t *testing.T) {
 	defer gock.Off()
+	gock.Observe(gock.DumpRequest)
 
 	gock.New("https://api.duffel.com").
-		Get("/api/order_change_requests/ocr_0000A3bQP9RLVfNUcdpLpw").
+		Get("/air/order_change_requests/ocr_0000A3bQP9RLVfNUcdpLpw").
 		Reply(200).
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
@@ -93,4 +94,27 @@ func TestGetOrderChangeRequest(t *testing.T) {
 	a.Equal("35.50 GBP", data.OrderChangeOffers[0].NewTotalAmount().String())
 	a.Equal("10.50 GBP", data.OrderChangeOffers[0].PenaltyTotalAmount().String())
 	a.Equal("90.80 GBP", data.OrderChangeOffers[0].ChangeTotalAmount().String())
+}
+
+func TestCreatePendingOrderChange(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("https://api.duffel.com").
+		Post("/air/order_changes").
+		Reply(201).
+		SetHeader("Ratelimit-Limit", "5").
+		SetHeader("Ratelimit-Remaining", "5").
+		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
+		SetHeader("Date", time.Now().Format(time.RFC1123)).
+		File("fixtures/201-create-pending-order-change.json")
+
+	a := assert.New(t)
+
+	ctx := context.TODO()
+	client := New("duffel_test_123")
+
+	data, err := client.CreatePendingOrderChange(ctx, "oco_0000A3vUda8dKRtUSQPSXw")
+	a.NoError(err)
+	a.Equal("ocr_0000A3tQSmKyqOrcySrGbo", data.ID)
+	a.Equal("ord_0000A3tQcCRZ9R8OY0QlxA", data.OrderID)
 }

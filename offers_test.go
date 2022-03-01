@@ -39,7 +39,7 @@ func TestListOffers(t *testing.T) {
 	a.NoError(err)
 	a.NotNil(data)
 
-	a.Equal("228.60", data.TotalAmount)
+	a.Equal("228.60 USD", data.TotalAmount().String())
 	a.Len(data.Slices, 1)
 }
 

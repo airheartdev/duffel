@@ -11,10 +11,10 @@ import (
 
 func TestCreateOrderChangeRequest(t *testing.T) {
 	defer gock.Off()
-	// gock.Observe(gock.DumpRequest)
+	gock.Observe(gock.DumpRequest)
 
 	gock.New("https://api.duffel.com").
-		Post("/api/order_change_requests").
+		Post("/air/order_change_requests").
 		JSON(`{
 			"data": {
 				"slices": {

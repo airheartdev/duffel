@@ -168,12 +168,19 @@ func listOfferRequests(c *cli.Context) error {
 
 	iter := client.ListOfferRequests(c.Context)
 
+	// t := table.NewWriter()
+	// t.SetOutputMirror(os.Stdout)
+	// t.SetStyle(table.StyleColoredBright)
+	// t.AppendHeader(table.Row{
+	// 	"ID", "Origin", "Destination", "Departure Date", "Return Date", "Status",
+	// })
+
 	for iter.Next() {
 		req := iter.Current()
 		fmt.Printf("===> Offer Request: %s created: %s\n", req.ID, time.Time(req.CreatedAt).Format(time.RFC3339))
 
 		for _, slice := range req.Slices {
-			fmt.Printf("   > %s to %s on %s\n", *slice.Origin.IATACode, *slice.Destination.IATACode, slice.DepartureDate.String())
+			fmt.Printf("   > %s to %s on %s\n", slice.Origin.IATACode, slice.Destination.IATACode, slice.DepartureDate.String())
 		}
 	}
 

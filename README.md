@@ -97,7 +97,7 @@ if err != nil {
 
 To maintain simplicity and ease of use, this client library is hand-coded (instead of using Postman to Go code generation) and contributions are greatly apprecicated.
 
-- [x] Most API types
+- [x] Types for all API models
 - [x] API Client
 - [x] Error handling
 - [x] Pagination _(using iterators)_

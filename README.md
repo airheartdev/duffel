@@ -108,15 +108,15 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
   - [x] List all offers
 - [x] Offers
 - [x] Orders
-- [ ] Payments
 - [x] Seat Maps
 - [x] Order Cancellations
 - [x] Order Change Requests
-- [ ] Order Change Offers
-- [ ] Order Changes
+- [x] Order Change Offers
+- [x] Order Changes
 - [x] Airports
 - [x] Airlines
 - [x] Equipment (Aircraft)
+- [ ] Payments
 
 ## License
 

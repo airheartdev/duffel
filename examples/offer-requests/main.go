@@ -75,7 +75,7 @@ func main() {
 
 		fmt.Println()
 
-		fmt.Printf("---> Flights $%s\n", offer.TaxAmount)
+		fmt.Printf("---> Flights $%s\n", offer.TaxAmount().String())
 		for _, s := range offer.Slices {
 			fmt.Printf("    🛫 %s to %s\n", *s.Origin.CityName, *s.Destination.CityName)
 

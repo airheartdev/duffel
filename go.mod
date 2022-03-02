@@ -15,10 +15,15 @@ require (
 )
 
 require (
+	github.com/cockroachdb/apd/v3 v3.0.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rickb777/plural v1.4.1 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
@@ -28,11 +33,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20200605160147-a5ece683394c // indirect
 )
 
-require (
-	github.com/cockroachdb/apd/v3 v3.0.1 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rickb777/plural v1.4.1 // indirect
-	github.com/segmentio/encoding v0.3.4
-)
+require github.com/segmentio/encoding v0.3.4

@@ -120,4 +120,21 @@ func (o *Offer) TaxAmount() currency.Amount {
 	return amount
 }
 
+// Less will sort ascending by total amount
+func (o Offers) Less(i, j int) bool {
+	cmp, err := o[i].TotalAmount().Cmp(o[j].TotalAmount())
+	if err != nil {
+		return false
+	}
+	return cmp < 0
+}
+
+func (o Offers) Swap(i, j int) {
+	o[i], o[j] = o[j], o[i]
+}
+
+func (o Offers) Len() int {
+	return len(o)
+}
+
 var _ OfferClient = (*API)(nil)

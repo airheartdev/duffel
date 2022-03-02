@@ -204,6 +204,8 @@ type (
 
 	PaymentMethod string
 
+	// Offers is slice of offers that implement the sort.Sort interface
+	// By default, offers are sorted cheapest first.
 	Offers []Offer
 
 	Option  func(*Options)
@@ -220,7 +222,6 @@ type (
 		options   *Options
 		limiter   *rate.Limiter
 		rateLimit *RateLimit
-		debug     bool
 	}
 
 	API struct {

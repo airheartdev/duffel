@@ -18,11 +18,6 @@ func newInternalClient[Req any, Resp any](a *API) *client[Req, Resp] {
 	}
 }
 
-func (c *client[R, W]) Debug() *client[R, W] {
-	c.debug = true
-	return c
-}
-
 func (c *client[Req, Resp]) Do(ctx context.Context, resourceName string, method string, body *Req, opts ...RequestOption) (*http.Response, error) {
 	payload, err := encodePayload(body)
 	if err != nil {

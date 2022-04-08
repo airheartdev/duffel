@@ -69,7 +69,7 @@ type (
 	}
 
 	SegmentPassenger struct {
-		ID                      string     `json:"id"`
+		ID                      string     `json:"passenger_id"`
 		FareBasisCode           string     `json:"fare_basis_code"`
 		CabinClassMarketingName string     `json:"cabin_class_marketing_name"`
 		CabinClass              CabinClass `json:"cabin_class"`

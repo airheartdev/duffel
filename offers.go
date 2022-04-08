@@ -34,6 +34,13 @@ type (
 		Slices                             []Slice                 `json:"slices"`
 		Passengers                         []OfferRequestPassenger `json:"passengers"`
 		PassengerIdentityDocumentsRequired bool                    `json:"passenger_identity_documents_required"`
+		PaymentRequirements                OfferPaymentRequirement `json:"payment_requirements"`
+	}
+
+	OfferPaymentRequirement struct {
+		RequiresInstantPayment  bool      `json:"requires_instant_payment"`
+		PriceGuaranteeExpiresAt *DateTime `json:"price_guarantee_expires_at"`
+		PaymentRequiredBy       *DateTime `json:"payment_required_by"`
 	}
 
 	ListOffersSortParam string

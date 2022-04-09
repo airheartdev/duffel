@@ -85,6 +85,10 @@ func TestCreateOrder(t *testing.T) {
 	a.Equal("ord_00009hthhsUZ8W4LxQgkjo", order.ID)
 	a.Equal("100.00 GBP", order.Conditions.ChangeBeforeDeparture.PenaltyAmount().String())
 	a.Equal("100.00 GBP", order.Conditions.RefundBeforeDeparture.PenaltyAmount().String())
+	a.Len(order.Slices, 1)
+	a.Len(order.Slices[0].Segments, 1)
+	a.Len(order.Slices[0].Segments[0].Passengers, 1)
+	a.Equal("passenger_0", order.Slices[0].Segments[0].Passengers[0].ID)
 }
 
 func TestListOrders(t *testing.T) {

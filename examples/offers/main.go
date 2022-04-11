@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/airheartdev/duffel"
+	"github.com/thetreep/duffel"
 	"github.com/urfave/cli/v2"
 )
 

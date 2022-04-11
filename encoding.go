@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/airheartdev/duffel/iso8601"
 	"github.com/segmentio/encoding/json"
+	"github.com/thetreep/duffel/iso8601"
 )
 
 type (

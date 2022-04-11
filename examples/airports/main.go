@@ -11,7 +11,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/airheartdev/duffel"
+	"github.com/thetreep/duffel"
 )
 
 func main() {

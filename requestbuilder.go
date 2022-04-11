@@ -11,8 +11,8 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/cockroachdb/errors"
 	"github.com/gorilla/schema"
-	"github.com/pkg/errors"
 	"github.com/segmentio/encoding/json"
 )
 

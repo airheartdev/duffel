@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/airheartdev/duffel"
 	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/thetreep/duffel"
 )
 
 func main() {

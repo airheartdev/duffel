@@ -2,7 +2,7 @@
 
 A Go (golang) client library for the [Duffel Flights API](https://duffel.com) implemented by the [Airheart](https://airheart.com) team.
 
-[![Tests](https://github.com/airheartdev/duffel/actions/workflows/ci.yaml/badge.svg)](https://github.com/airheartdev/duffel/actions/workflows/ci.yaml)
+[![Tests](https://github.com/thetreep/duffel/actions/workflows/ci.yaml/badge.svg)](https://github.com/thetreep/duffel/actions/workflows/ci.yaml)
 
 ## Installation
 
@@ -11,7 +11,7 @@ We've designed this pkg to be familiar and ideomatic to any Go developer. Go get
 > NOTE: Requires at least Go 1.18 since we use generics on the internal API client
 
 ```shell
-go get github.com/airheartdev/duffel
+go get github.com/thetreep/duffel
 ```
 
 ## Usage examples
@@ -29,7 +29,7 @@ dfl := duffel.New(os.Getenv("DUFFEL_TOKEN"))
 
 For available methods, see:
 
-- [GoDoc Documentation](https://pkg.go.dev/github.com/airheartdev/duffel#section-documentation)
+- [GoDoc Documentation](https://pkg.go.dev/github.com/thetreep/duffel#section-documentation)
 - [Duffel API reference](https://duffel.com/docs/api/overview/welcome)
 
 And familiarise yourself with the implementation notes:

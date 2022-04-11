@@ -17,8 +17,8 @@ type (
 		OrderClient
 		OrderChangeClient
 		OrderCancellationClient
-    OrderPaymentClient		
-    SeatmapClient
+		OrderPaymentClient
+		SeatmapClient
 		AirportsClient
 		AirlinesClient
 		AircraftClient

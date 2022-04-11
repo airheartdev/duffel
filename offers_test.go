@@ -67,6 +67,9 @@ func TestGetOfferByID(t *testing.T) {
 	a.NotNil(data)
 	a.Equal("45.00 GBP", data.TotalAmount().String())
 	a.Len(data.Slices, 1)
+	a.False(data.PaymentRequirements.RequiresInstantPayment)
+	a.Equal(time.Date(2020, 1, 17, 10, 42, 14, 0, time.UTC).Unix(), time.Time(*data.PaymentRequirements.PriceGuaranteeExpiresAt).Unix())
+	a.Equal(time.Date(2020, 1, 17, 10, 42, 14, 0, time.UTC).Unix(), time.Time(*data.PaymentRequirements.PaymentRequiredBy).Unix())
 }
 
 func TestUpdateOffserPassenger(t *testing.T) {

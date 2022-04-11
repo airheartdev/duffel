@@ -6,7 +6,7 @@ require (
 	github.com/bojanz/currency v1.0.4
 	github.com/gorilla/schema v1.2.0
 	github.com/jedib0t/go-pretty/v6 v6.3.7
-	github.com/pkg/errors v0.9.1
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rickb777/date v1.20.0
 	github.com/stretchr/testify v1.7.4
 	github.com/urfave/cli/v2 v2.11.2
@@ -35,7 +35,6 @@ require (
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/sys v0.0.0-20220823224334-20c2bfdbfe24 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect

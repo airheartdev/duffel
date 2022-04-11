@@ -127,8 +127,6 @@ github.com/segmentio/asm/keyset
 github.com/segmentio/encoding/ascii
 github.com/segmentio/encoding/iso8601
 github.com/segmentio/encoding/json
-# github.com/shurcooL/sanitized_anchor_name v1.0.0
-## explicit
 # github.com/stretchr/testify v1.7.4
 ## explicit; go 1.13
 github.com/stretchr/testify/assert

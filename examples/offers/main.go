@@ -12,8 +12,9 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/thetreep/duffel"
 	"github.com/urfave/cli/v2"
+
+	"github.com/thetreep/duffel"
 )
 
 func main() {

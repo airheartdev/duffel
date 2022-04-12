@@ -2,14 +2,14 @@
 
 A Go (golang) client library for the [Duffel](https://duffel.com) API implemented by the Airheart team.
 
-[![Tests](https://github.com/airheartdev/duffel/actions/workflows/ci.yaml/badge.svg)](https://github.com/airheartdev/duffel/actions/workflows/ci.yaml)
+[![Tests](https://github.com/thetreep/duffel/actions/workflows/ci.yaml/badge.svg)](https://github.com/thetreep/duffel/actions/workflows/ci.yaml)
 
 ## Installation
 
 **Requires at least Go 1.18-rc1 since we use generics on the internal API client**
 
 ```shell
-go get github.com/airheartdev/duffel
+go get github.com/thetreep/duffel
 ```
 
 ## Usage examples
@@ -27,7 +27,7 @@ client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
 
 For available methods, see:
 
-- [GoDoc Documentation](https://pkg.go.dev/github.com/airheartdev/duffel#section-documentation)
+- [GoDoc Documentation](https://pkg.go.dev/github.com/thetreep/duffel#section-documentation)
 - [Duffel API reference](https://duffel.com/docs/api/overview/welcome)
 
 And familiarise yourself with the implementation notes:

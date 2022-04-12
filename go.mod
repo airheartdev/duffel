@@ -6,11 +6,11 @@ require (
 	github.com/bojanz/currency v1.0.3
 	github.com/gorilla/schema v1.2.0
 	github.com/jedib0t/go-pretty/v6 v6.3.0
-	github.com/pkg/errors v0.9.1
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rickb777/date v1.17.0
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli/v2 v2.4.0
-	golang.org/x/time v0.0.0-20220224211638-0e9765cccd65
+	golang.org/x/time v0.0.0-20220411224347-583f2d630306
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
 
@@ -33,14 +33,12 @@ require (
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/segmentio/asm v1.1.4 // indirect
-	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
-	golang.org/x/sys v0.0.0-20220408201424-a24fb2fb8a0f // indirect
+	golang.org/x/sys v0.0.0-20220412071739-889880a91fd5 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 require (
-	github.com/airheartdev/duffel v0.2.1
 	github.com/cockroachdb/errors v1.9.0
 	github.com/segmentio/encoding v0.3.4
 )

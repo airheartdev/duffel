@@ -100,6 +100,7 @@ func TestUpdateOffserPassenger(t *testing.T) {
 	a.NoError(err)
 	a.NotNil(data)
 
+	a.Equal("pas_00009hj8USM7Ncg31cBCL", data.ID)
 	a.Equal("Earhardt", data.FamilyName)
 	a.Equal("Amelia", data.GivenName)
 	a.Equal("adult", data.Type.String())

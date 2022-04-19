@@ -92,6 +92,10 @@ func (t Duration) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%s\"", iso8601.FormatDuration(time.Duration(t)))), nil
 }
 
+func (t Duration) String() string {
+	return iso8601.FormatDuration(time.Duration(t))
+}
+
 // UnmarshalJSON implements the json.Unmarshaler from date string to time.Time
 func (t *Duration) UnmarshalJSON(b []byte) error {
 	f, err := parseJSONBytesToString(b)

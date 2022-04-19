@@ -53,6 +53,7 @@ type (
 	}
 
 	Flight struct {
+		ID                           string             `json:"id"`
 		Passengers                   []SegmentPassenger `json:"passengers"`
 		Origin                       Location           `json:"origin"`
 		OriginTerminal               string             `json:"origin_terminal"`

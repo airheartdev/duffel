@@ -55,6 +55,7 @@ func TestCreateOffersRequest(t *testing.T) {
 	a.Equal("2021-12-30", data.Slices[0].DepartureDate.String())
 	a.Equal("arp_jfk_us", data.Slices[0].Origin.ID)
 	a.Equal("airport", data.Slices[0].OriginType)
+	a.Equal("2021-12-30", data.Slices[0].DepartureDate.String())
 }
 
 func TestGetOfferRequest(t *testing.T) {

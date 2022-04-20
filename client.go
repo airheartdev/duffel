@@ -63,7 +63,9 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Accept-Encoding", "gzip")
+	if !c.options.Debug {
+		req.Header.Add("Accept-Encoding", "gzip")
+	}
 	req.Header.Add("User-Agent", c.options.UserAgent)
 	req.Header.Add("Duffel-Version", c.options.Version)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.APIToken))
@@ -89,6 +91,14 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 	resp, err := c.httpDoer.Do(req)
 	if err != nil {
 		return nil, err
+	}
+
+	if c.options.Debug {
+		b, err := httputil.DumpResponse(resp, true)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Printf("RESPONSE:\n%s\n", string(b))
 	}
 
 	if resp.StatusCode > 399 {

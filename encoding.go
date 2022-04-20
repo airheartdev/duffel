@@ -2,6 +2,7 @@ package duffel
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 	"time"
 
@@ -94,6 +95,28 @@ func (t Duration) MarshalJSON() ([]byte, error) {
 
 func (t Duration) String() string {
 	return iso8601.FormatDuration(time.Duration(t))
+}
+
+// UnmarshalGQL implements the graphql.Unmarshaler interface
+func (d *Duration) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("invalid duration value: %v", v)
+	}
+
+	dur, err := iso8601.ParseDuration(str)
+	if err != nil {
+		return err
+	}
+
+	*d = Duration(dur)
+
+	return nil
+}
+
+// MarshalGQL implements the graphql.Marshaler interface
+func (d Duration) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(d.String()))
 }
 
 // UnmarshalJSON implements the json.Unmarshaler from date string to time.Time

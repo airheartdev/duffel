@@ -37,3 +37,11 @@ func WithHTTPClient(client *http.Client) Option {
 		c.HttpDoer = client
 	}
 }
+
+// WithDebug enables debug logging of requests and responses.
+// DO NOT USE IN PRODUCTION.
+func WithDebug(client *http.Client) Option {
+	return func(c *Options) {
+		c.Debug = true
+	}
+}

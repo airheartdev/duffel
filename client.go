@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 
 	"github.com/segmentio/encoding/json"
@@ -75,6 +76,14 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 				return nil, err
 			}
 		}
+	}
+
+	if c.options.Debug {
+		b, err := httputil.DumpRequestOut(req, true)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Printf("REQUEST:\n%s\n", string(b))
 	}
 
 	resp, err := c.httpDoer.Do(req)

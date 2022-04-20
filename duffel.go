@@ -216,6 +216,7 @@ type (
 		Host      string
 		UserAgent string
 		HttpDoer  *http.Client
+		Debug     bool
 	}
 
 	client[Req any, Resp any] struct {

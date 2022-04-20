@@ -27,11 +27,12 @@ type (
 	Gender string
 
 	BaseSlice struct {
-		DepartureDate   Date     `json:"departure_date,omitempty"`
-		Destination     Location `json:"destination"`
-		DestinationType string   `json:"destination_type"`
-		Origin          Location `json:"origin"`
-		OriginType      string   `json:"origin_type"`
+		OriginType      string    `json:"origin_type"`
+		Origin          Location  `json:"origin"`
+		DestinationType string    `json:"destination_type"`
+		Destination     Location  `json:"destination"`
+		DepartureDate   Date      `json:"departure_date,omitempty"`
+		CreatedAt       time.Time `json:"created_at,omitempty"`
 	}
 
 	// TODO: We probably need an OfferRequestSlice and an OrderSlice since not all fields apply to both.
@@ -43,13 +44,10 @@ type (
 		Changeable bool `json:"changeable,omitempty"`
 
 		// The conditions associated with this slice, describing the kinds of modifications you can make and any penalties that will apply to those modifications.
-		Conditions Conditions `json:"conditions,omitempty"`
-
-		CreatedAt     time.Time `json:"created_at,omitempty"`
-		DepartureDate Date      `json:"departure_date,omitempty"`
-		Duration      Duration  `json:"duration,omitempty"`
-		Segments      []Flight  `json:"segments,omitempty"`
-		FareBrandName string    `json:"fare_brand_name,omitempty"`
+		Conditions    Conditions `json:"conditions,omitempty"`
+		Duration      Duration   `json:"duration,omitempty"`
+		Segments      []Flight   `json:"segments,omitempty"`
+		FareBrandName string     `json:"fare_brand_name,omitempty"`
 	}
 
 	Flight struct {

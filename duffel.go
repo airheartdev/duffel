@@ -241,7 +241,7 @@ const (
 	PassengerTypeInfantWithoutSeat PassengerType = "infant_without_seat"
 
 	CabinClassEconomy  CabinClass = "economy"
-	CabinClassPremium  CabinClass = "premium"
+	CabinClassPremium  CabinClass = "premium_economy"
 	CabinClassBusiness CabinClass = "business"
 	CabinClassFirst    CabinClass = "first"
 

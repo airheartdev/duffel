@@ -13,9 +13,4 @@ vendor
 *.out
 
 # Dependency directories (remove the comment below to include it)
-<<<<<<< HEAD
-# vendor/
-examples/.DS_Store
-=======
 vendor/
->>>>>>> 86be5a6 (fix test)

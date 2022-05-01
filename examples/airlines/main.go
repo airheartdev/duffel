@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/gocarina/gocsv"
+
 	"github.com/thetreep/duffel"
 )
 

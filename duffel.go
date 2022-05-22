@@ -89,16 +89,16 @@ type (
 	}
 
 	Airport struct {
-		ID              string   `json:"id"`
-		Name            string   `json:"name"`
-		City            Location `json:"city"`
-		CityName        string   `json:"city_name"`
-		IATACode        string   `json:"iata_code"`
-		IATACountryCode string   `json:"iata_country_code"`
-		ICAOCode        string   `json:"icao_code"`
-		Latitude        float32  `json:"latitude"`
-		Longitude       float32  `json:"longitude"`
-		TimeZone        string   `json:"time_zone"`
+		ID              string  `json:"id"`
+		Name            string  `json:"name"`
+		City            City    `json:"city"`
+		CityName        string  `json:"city_name"`
+		IATACode        string  `json:"iata_code"`
+		IATACountryCode string  `json:"iata_country_code"`
+		ICAOCode        string  `json:"icao_code"`
+		Latitude        float32 `json:"latitude"`
+		Longitude       float32 `json:"longitude"`
+		TimeZone        string  `json:"time_zone"`
 	}
 
 	Baggage struct {
@@ -118,8 +118,15 @@ type (
 		IATACode        string    `json:"iata_code,omitempty"`
 		IATACityCode    *string   `json:"iata_city_code,omitempty"`
 		CityName        *string   `json:"city_name,omitempty"`
-		City            *Location `json:"city,omitempty"`
+		City            *City     `json:"city,omitempty"`
 		Airports        []Airport `json:"airports,omitempty"`
+	}
+
+	City struct {
+		ID              string  `json:"id"`
+		Name            string  `json:"name"`
+		IATACountryCode *string `json:"iata_country_code,omitempty"`
+		ICAOCode        string  `json:"icao_code,omitempty"`
 	}
 
 	OrderPassenger struct {

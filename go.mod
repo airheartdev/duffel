@@ -33,4 +33,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20200605160147-a5ece683394c // indirect
 )
 
-require github.com/segmentio/encoding v0.3.4
+require (
+	github.com/gocarina/gocsv v0.0.0-20220520193141-bb9bebb918c3
+	github.com/segmentio/encoding v0.3.4
+)

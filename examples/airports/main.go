@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/airheartdev/duffel"
-	"github.com/gocarina/gocsv"
 )
 
 func main() {
@@ -30,7 +30,7 @@ func main() {
 
 	log.Println("Loaded all airports", len(cache))
 
-	csvFilePath, err := os.Create("examples/airports/airports.csv")
+	csvFilePath, err := os.Create("examples/airports/airports.json")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -40,7 +40,7 @@ func main() {
 		rows = append(rows, airline)
 	}
 
-	err = gocsv.MarshalFile(rows, csvFilePath)
+	err = json.NewEncoder(csvFilePath).Encode(rows)
 	if err != nil {
 		log.Fatalln(err)
 	}

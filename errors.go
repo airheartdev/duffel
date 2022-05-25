@@ -105,8 +105,10 @@ const (
 )
 
 type DuffelError struct {
-	Meta   ErrorMeta `json:"meta"`
-	Errors []Error   `json:"errors"`
+	Meta       ErrorMeta `json:"meta"`
+	Errors     []Error   `json:"errors"`
+	StatusCode int       `json:"-"`
+	Retryable  bool      `json:"-"`
 }
 
 func (e *DuffelError) Error() string {

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 
 	"github.com/segmentio/encoding/json"
 )
@@ -140,7 +141,13 @@ func decodeError(response *http.Response) error {
 		return err
 	}
 
-	derr := &DuffelError{}
+	notRetryable := strings.HasPrefix(response.Request.URL.Path, "/air/orders") &&
+		response.StatusCode == http.StatusInternalServerError
+
+	derr := &DuffelError{
+		StatusCode: response.StatusCode,
+		Retryable:  !notRetryable,
+	}
 	err = json.NewDecoder(reader).Decode(derr)
 	if err != nil {
 		return err

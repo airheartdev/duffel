@@ -84,16 +84,18 @@ Each API method returns an error or an iterator that returns errors at each iter
 // Example error inspection after making an API call:
 offer, err := client.GetOffer(ctx, "off_123")
 if err != nil {
-  if err, ok:= err.(duffel.DuffelError); ok {
-    // err.Errors[0].Type etc
-    // err.IsCode(duffel.BadRequest)
+  if derr, ok:= err.(*duffel.DuffelError); ok {
+    // derr.Errors[0].Type etc
+    // derr.IsCode(duffel.BadRequest)
   }else{
     // Do something with regular Go error
   }
 }
 ```
 
-## Implementation status:
+You can also check the `derr.Retryable` field, which will be false if you need to contact Duffel support to resolve the issue, and should not be retried. Example, creating an order.
+
+## Implementation status
 
 To maintain simplicity and ease of use, this client library is hand-coded (instead of using Postman to Go code generation) and contributions are greatly apprecicated.
 

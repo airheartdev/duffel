@@ -29,4 +29,11 @@ func TestClientError(t *testing.T) {
 	derr := err.(*DuffelError)
 	a.True(derr.IsType(AirlineError))
 	a.True(derr.IsCode(AirlineUnknown))
+	a.True(IsErrorType(err, AirlineError))
+	a.True(IsErrorCode(err, AirlineUnknown))
+	a.True(ErrIsRetryable(err))
+
+	reqId, ok := RequestIDFromError(err)
+	a.True(ok)
+	a.Equal("FZW0H3HdJwKk5HMAAKxB", reqId)
 }

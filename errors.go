@@ -104,6 +104,24 @@ const (
 	UnsupportedVersion ErrorCode = "unsupported_version"
 )
 
+// IsErrorCode is a concenience method to check if an error is a specific error code from Duffel.
+// This simplifies error handling branches without needing to type cast multiple times in your code.
+func IsErrorCode(err error, code ErrorCode) bool {
+	if err, ok := err.(*DuffelError); ok {
+		return err.IsCode(code)
+	}
+	return false
+}
+
+// IsErrorType is a concenience method to check if an error is a specific error type from Duffel.
+// This simplifies error handling branches without needing to type cast multiple times in your code.
+func IsErrorType(err error, typ ErrorType) bool {
+	if err, ok := err.(*DuffelError); ok {
+		return err.IsType(typ)
+	}
+	return false
+}
+
 type DuffelError struct {
 	Meta       ErrorMeta `json:"meta"`
 	Errors     []Error   `json:"errors"`

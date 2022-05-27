@@ -89,6 +89,11 @@ func TestCreateOrder(t *testing.T) {
 	a.Len(order.Slices[0].Segments, 1)
 	a.Len(order.Slices[0].Segments[0].Passengers, 1)
 	a.Equal("passenger_0", order.Slices[0].Segments[0].Passengers[0].ID)
+	a.Equal(CabinClassEconomy, order.Slices[0].Segments[0].Passengers[0].CabinClass)
+	a.Equal("Economy Basic", order.Slices[0].Segments[0].Passengers[0].CabinClassMarketingName)
+	a.Equal("14B", order.Slices[0].Segments[0].Passengers[0].Seat.Designator)
+	a.Equal("Exit row seat", order.Slices[0].Segments[0].Passengers[0].Seat.Name)
+	a.Equal([]string{"Do not seat children in exit row seats", "Do not seat passengers with special needs in exit row seats"}, order.Slices[0].Segments[0].Passengers[0].Seat.Disclosures)
 }
 
 func TestListOrders(t *testing.T) {

@@ -14,40 +14,41 @@ func main() {
 	apiToken := os.Getenv("DUFFEL_TOKEN")
 	client := duffel.New(apiToken)
 
-	childAge := 1
+	// childAge := 1
 
 	data, err := client.CreateOfferRequest(context.Background(), duffel.OfferRequestInput{
 		ReturnOffers: true,
+
 		Passengers: []duffel.OfferRequestPassenger{
 			{
-				FamilyName: "Earhart",
-				GivenName:  "Amelia",
-				Type:       duffel.PassengerTypeAdult,
-				LoyaltyProgrammeAccounts: []duffel.LoyaltyProgrammeAccount{
-					{
-						AirlineIATACode: "QF",
-						AccountNumber:   "1922223336",
-					},
-				},
-			},
-			{
+				// FamilyName: "Earhart",
+				// GivenName:  "Amelia",
 				Type: duffel.PassengerTypeAdult,
+				// LoyaltyProgrammeAccounts: []duffel.LoyaltyProgrammeAccount{
+				// 	{
+				// 		AirlineIATACode: "QF",
+				// 		AccountNumber:   "1922223336",
+				// 	},
+				// },
 			},
-			{
-				Age: childAge,
-			},
+			// {
+			// 	Type: duffel.PassengerTypeAdult,
+			// },
+			// {
+			// 	Age: childAge,
+			// },
 		},
-		CabinClass: duffel.CabinClassBusiness,
+		CabinClass: duffel.CabinClassEconomy,
 		Slices: []duffel.OfferRequestSlice{
 			{
-				DepartureDate: duffel.Date(time.Now().AddDate(0, 0, 7)),
-				Origin:        "NYC",
-				Destination:   "AUS",
+				DepartureDate: duffel.Date(time.Date(2022, time.June, 24, 0, 0, 0, 0, time.UTC)),
+				Origin:        "AUS",
+				Destination:   "MSP",
 			},
 			{
-				DepartureDate: duffel.Date(time.Now().AddDate(0, 0, 10)),
-				Origin:        "AUS",
-				Destination:   "NYC",
+				DepartureDate: duffel.Date(time.Date(2022, time.June, 26, 0, 0, 0, 0, time.UTC)),
+				Origin:        "MSP",
+				Destination:   "AUS",
 			},
 		},
 	})
@@ -75,7 +76,7 @@ func main() {
 
 		fmt.Println()
 
-		fmt.Printf("---> Flights $%s\n", offer.TaxAmount().String())
+		fmt.Printf("---> Flights $%s\n", offer.TotalAmount().String())
 		for _, s := range offer.Slices {
 			fmt.Printf("    🛫 %s to %s\n", *s.Origin.CityName, *s.Destination.CityName)
 

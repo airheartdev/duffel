@@ -74,6 +74,13 @@ type (
 		CabinClassMarketingName string     `json:"cabin_class_marketing_name"`
 		CabinClass              CabinClass `json:"cabin_class"`
 		Baggages                []Baggage  `json:"baggages"`
+		Seat                    Seat       `json:"seat"`
+	}
+
+	Seat struct {
+		Name        string   `json:"name,omitempty"`
+		Disclosures []string `json:"disclosures,omitempty"`
+		Designator  string   `json:"designator,omitempty"`
 	}
 
 	Aircraft struct {

@@ -1,12 +1,14 @@
 # Duffel API Go Client
 
-A Go (golang) client library for the [Duffel](https://duffel.com) API implemented by the Airheart team.
+A Go (golang) client library for the [Duffel Flights API](https://duffel.com) implemented by the [Airheart](https://airheart.com) team.
 
 [![Tests](https://github.com/thetreep/duffel/actions/workflows/ci.yaml/badge.svg)](https://github.com/thetreep/duffel/actions/workflows/ci.yaml)
 
 ## Installation
 
-**Requires at least Go 1.18-rc1 since we use generics on the internal API client**
+We've designed this pkg to be familiar and ideomatic to any Go developer. Go get it the usual way:
+
+> NOTE: Requires at least Go 1.18 since we use generics on the internal API client
 
 ```shell
 go get github.com/thetreep/duffel
@@ -22,7 +24,7 @@ The easiest way to get started, assuming you have a Duffel account set up and an
 
 ```go
 // Create a new client:
-client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
+dfl := duffel.New(os.Getenv("DUFFEL_TOKEN"))
 ```
 
 For available methods, see:
@@ -48,8 +50,8 @@ total.String() // 100.00 USD
 All requests that return more than one record will return an iterator. An Iterator automatically paginates results and respects rate limits, reducing the complexity of the overall programming model.
 
 ```go
-client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
-iter := client.ListAirports(ctx, duffel.ListAirportsParams{
+dfl := duffel.New(os.Getenv("DUFFEL_TOKEN"))
+iter := dfl.ListAirports(ctx, duffel.ListAirportsParams{
   IATACountryCode: "AU",
 })
 
@@ -76,24 +78,42 @@ if err != nil  {
 // airports is a []*duffel.Airport
 ```
 
-### Error Handling
+## Error Handling
 
 Each API method returns an error or an iterator that returns errors at each iteration. If an error is returned from Duffel, it will be of type `DuffelError` and expose more details on how to handle it.
 
 ```go
 // Example error inspection after making an API call:
-offer, err := client.GetOffer(ctx, "off_123")
+offer, err := dfl.GetOffer(ctx, "off_123")
 if err != nil {
-  if err, ok:= err.(duffel.DuffelError); ok {
-    // err.Errors[0].Type etc
-    // err.IsCode(duffel.BadRequest)
+  // Simple error code check
+  if duffel.IsErrorCode(err, duffel.AirlineInternal) {
+    // Don't retry airline errors, contact support
+  }
+
+  // Access the DuffelError object to see more detail
+  if derr, ok:= err.(*duffel.DuffelError); ok {
+    // derr.Errors[0].Type etc
+    // derr.IsCode(duffel.BadRequest)
   }else{
     // Do something with regular Go error
   }
 }
 ```
 
-## Implementation status:
+### `duffel.IsErrorCode(err, code)`
+
+`IsErrorCode` is a concenience method to check if an error is a specific error code from Duffel.
+This simplifies error handling branches without needing to type cast multiple times in your code.
+
+### `duffel.IsErrorType(err, typ)`
+
+`IsErrorType` is a concenience method to check if an error is a specific error type from Duffel.
+This simplifies error handling branches without needing to type cast multiple times in your code.
+
+You can also check the `derr.Retryable` field, which will be false if you need to contact Duffel support to resolve the issue, and should not be retried. Example, creating an order.
+
+## Implementation status
 
 To maintain simplicity and ease of use, this client library is hand-coded (instead of using Postman to Go code generation) and contributions are greatly apprecicated.
 
@@ -116,7 +136,7 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 - [x] Airports
 - [x] Airlines
 - [x] Equipment (Aircraft)
-- [ ] Payments
+- [ ] Payments (Looking for contributions)
 
 ## License
 

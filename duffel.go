@@ -74,6 +74,13 @@ type (
 		CabinClassMarketingName string     `json:"cabin_class_marketing_name"`
 		CabinClass              CabinClass `json:"cabin_class"`
 		Baggages                []Baggage  `json:"baggages"`
+		Seat                    Seat       `json:"seat"`
+	}
+
+	Seat struct {
+		Name        string   `json:"name,omitempty"`
+		Disclosures []string `json:"disclosures,omitempty"`
+		Designator  string   `json:"designator,omitempty"`
 	}
 
 	Aircraft struct {
@@ -89,16 +96,16 @@ type (
 	}
 
 	Airport struct {
-		ID              string   `json:"id"`
-		Name            string   `json:"name"`
-		City            Location `json:"city"`
-		CityName        string   `json:"city_name"`
-		IATACode        string   `json:"iata_code"`
-		IATACountryCode string   `json:"iata_country_code"`
-		ICAOCode        string   `json:"icao_code"`
-		Latitude        float32  `json:"latitude"`
-		Longitude       float32  `json:"longitude"`
-		TimeZone        string   `json:"time_zone"`
+		ID              string  `json:"id" `
+		Name            string  `json:"name" `
+		City            City    `json:"city,omitempty" `
+		CityName        string  `json:"city_name" `
+		IATACode        string  `json:"iata_code" `
+		IATACountryCode string  `json:"iata_country_code" `
+		ICAOCode        string  `json:"icao_code" `
+		Latitude        float32 `json:"latitude" `
+		Longitude       float32 `json:"longitude" `
+		TimeZone        string  `json:"time_zone" `
 	}
 
 	Baggage struct {
@@ -118,8 +125,15 @@ type (
 		IATACode        string    `json:"iata_code,omitempty"`
 		IATACityCode    *string   `json:"iata_city_code,omitempty"`
 		CityName        *string   `json:"city_name,omitempty"`
-		City            *Location `json:"city,omitempty"`
+		City            *City     `json:"city,omitempty"`
 		Airports        []Airport `json:"airports,omitempty"`
+	}
+
+	City struct {
+		ID              string  `json:"id,omitempty" csv:"city_id"`
+		Name            string  `json:"name" csv:"city_name"`
+		IATACountryCode *string `json:"iata_country_code,omitempty" csv:"city_iata_country_code"`
+		IATACode        string  `json:"iata_code,omitempty" csv:"city_iata_code"`
 	}
 
 	OrderPassenger struct {

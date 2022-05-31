@@ -104,9 +104,46 @@ const (
 	UnsupportedVersion ErrorCode = "unsupported_version"
 )
 
+// IsErrorCode is a concenience method to check if an error is a specific error code from Duffel.
+// This simplifies error handling branches without needing to type cast multiple times in your code.
+func IsErrorCode(err error, code ErrorCode) bool {
+	if err, ok := err.(*DuffelError); ok {
+		return err.IsCode(code)
+	}
+	return false
+}
+
+// IsErrorType is a concenience method to check if an error is a specific error type from Duffel.
+// This simplifies error handling branches without needing to type cast multiple times in your code.
+func IsErrorType(err error, typ ErrorType) bool {
+	if err, ok := err.(*DuffelError); ok {
+		return err.IsType(typ)
+	}
+	return false
+}
+
+// RequestIDFromError returns the request ID from the error. Use this when contacting Duffel support
+// for non-retryable errors such as `AirlineInternal` or `AirlineUnknown`.
+func RequestIDFromError(err error) (string, bool) {
+	if err, ok := err.(*DuffelError); ok {
+		return err.Meta.RequestID, true
+	}
+	return "", false
+}
+
+// ErrIsRetryable returns true if the request that generated this error is retryable.
+func ErrIsRetryable(err error) bool {
+	if err, ok := err.(*DuffelError); ok {
+		return err.Retryable
+	}
+	return false
+}
+
 type DuffelError struct {
-	Meta   ErrorMeta `json:"meta"`
-	Errors []Error   `json:"errors"`
+	Meta       ErrorMeta `json:"meta"`
+	Errors     []Error   `json:"errors"`
+	StatusCode int       `json:"-"`
+	Retryable  bool      `json:"-"`
 }
 
 func (e *DuffelError) Error() string {

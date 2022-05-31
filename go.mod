@@ -7,9 +7,9 @@ require (
 	github.com/gorilla/schema v1.2.0
 	github.com/jedib0t/go-pretty/v6 v6.3.1
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/rickb777/date v1.17.0
+	github.com/rickb777/date v1.19.1
 	github.com/stretchr/testify v1.7.0
-	github.com/urfave/cli/v2 v2.5.1
+	github.com/urfave/cli/v2 v2.8.1
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
@@ -33,12 +33,14 @@ require (
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	golang.org/x/sys v0.0.0-20220429233432-b5fbb4746d32 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 require (
 	github.com/cockroachdb/errors v1.9.0
+	github.com/gocarina/gocsv v0.0.0-20220520193141-bb9bebb918c3
 	github.com/segmentio/encoding v0.3.5
 )

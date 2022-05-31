@@ -22,6 +22,7 @@
                 "passenger_id": "passenger_0",
                 "cabin_class_marketing_name": "Economy Basic",
                 "cabin_class": "economy",
+                "fare_basis_code": "OXZ0RO",
                 "baggages": [
                   {
                     "type": "checked",

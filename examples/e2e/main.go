@@ -211,7 +211,7 @@ func main() {
 					segment.Destination.IATACode,
 					time.Time(segment.DepartingAt).Format(time.RFC822),
 					time.Time(segment.ArrivingAt).Format(time.RFC822),
-					segment.Passengers[0].CabinClass.String(),
+					// segment.Passengers != nil && segment.Passengers[0].CabinClass.String(),
 					renderChangeableStatus(slice),
 				})
 			}

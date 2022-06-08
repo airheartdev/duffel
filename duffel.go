@@ -182,6 +182,9 @@ type (
 
 		// Possible values: "arc_bsp_cash" or "balance"
 		Type PaymentMethod `json:"type"`
+
+		// Unique identifier of a lodged card by Duffel.
+		CardID string `json:"card_id,empty"`
 	}
 
 	// The payment status for an order.

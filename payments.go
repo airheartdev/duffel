@@ -25,6 +25,7 @@ type (
 		Amount   string      `json:"amount"`
 		Currency string      `json:"currency"`
 		Type     PaymentType `json:"type"`
+		CardID   string      `json:"card_id,omitempty"`
 	}
 
 	OrderPaymentClient interface {
@@ -35,10 +36,11 @@ type (
 const (
 	PaymentTypeBalance = PaymentType("balance")
 	PaymentTypeCash    = PaymentType("arc_bsp_cash")
+	PaymentTypeCard    = PaymentType("card")
 )
 
 func (a *API) CreatePayment(ctx context.Context, req CreatePaymentRequest) (*Payment, error) {
-	return newRequestWithAPI[CreatePaymentRequest,Payment](a).Post("/air/payments", &req).One(ctx)
+	return newRequestWithAPI[CreatePaymentRequest, Payment](a).Post("/air/payments", &req).One(ctx)
 }
 
 var _ OrderPaymentClient = (*API)(nil)

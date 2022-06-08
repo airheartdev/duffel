@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/bojanz/currency v1.0.3
 	github.com/gorilla/schema v1.2.0
-	github.com/jedib0t/go-pretty/v6 v6.3.1
+	github.com/jedib0t/go-pretty/v6 v6.3.2
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rickb777/date v1.19.1
 	github.com/stretchr/testify v1.7.0
@@ -41,6 +41,6 @@ require (
 
 require (
 	github.com/cockroachdb/errors v1.9.0
-	github.com/gocarina/gocsv v0.0.0-20220520193141-bb9bebb918c3
+	github.com/gocarina/gocsv v0.0.0-20220531201732-5f969b02b902
 	github.com/segmentio/encoding v0.3.5
 )

@@ -8,4 +8,4 @@ set -euo pipefail
 [[ ${DEBUG:-} ]] && set -x
 
 # go-licenser -licensor "Airheart, Inc." -license ASL2-Short
-addlicense -c "Airheart, Inc." -f .github/LICENSE_SHORT "./**/*.go"
+addlicense -c "Airheart, Inc." -f .github/LICENSE_SHORT ./**/*.go

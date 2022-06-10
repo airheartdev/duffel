@@ -19,11 +19,18 @@ type (
 	}
 
 	OfferRequestInput struct {
-		Passengers      []OfferRequestPassenger `json:"passengers" url:"-"`
-		Slices          []OfferRequestSlice     `json:"slices" url:"-"`
-		CabinClass      CabinClass              `json:"cabin_class" url:"-"`
-		ReturnOffers    bool                    `json:"-" url:"return_offers"`
-		SupplierTimeout int                     `json:"-" url:"supplier_timeout"`
+		// The passengers who want to travel. If you specify an age for a passenger, the type may differ for the same passenger in different offers due to airline's different rules. e.g. one airline may treat a 14 year old as an adult, and another as a young adult. You may only specify an age or a type – not both.
+		Passengers []OfferRequestPassenger `json:"passengers" url:"-"`
+		// The slices that make up this offer request. One-way journeys can be expressed using one slice, whereas return trips will need two.
+		Slices []OfferRequestSlice `json:"slices" url:"-"`
+		// The cabin that the passengers want to travel in
+		CabinClass CabinClass `json:"cabin_class" url:"-"`
+		// The maximum number of connections within any slice of the offer. For example 0 means a direct flight which will have a single segment within each slice and 1 means a maximum of two segments within each slice of the offer.
+		MaxConnections int `json:"max_connections" url:"-"`
+		// When set to true, the offer request resource returned will include all the offers returned by the airlines
+		ReturnOffers bool `json:"-" url:"return_offers"`
+		// The maximum amount of time in milliseconds to wait for each airline to respond
+		SupplierTimeout int `json:"-" url:"supplier_timeout"`
 	}
 
 	OfferRequestSlice struct {

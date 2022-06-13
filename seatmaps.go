@@ -104,7 +104,7 @@ func (a *API) GetSeatmaps(ctx context.Context, offerID string) *Iter[Seatmap] {
 	return newRequestWithAPI[EmptyPayload, Seatmap](a).
 		Get("/air/seat_maps").
 		WithParam("offer_id", offerID).
-		All(ctx)
+		Iter(ctx)
 }
 
 func (s *SectionService) TotalAmount() currency.Amount {

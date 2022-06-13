@@ -42,7 +42,7 @@ const (
 )
 
 func (a *API) CreatePayment(ctx context.Context, req CreatePaymentRequest) (*Payment, error) {
-	return newRequestWithAPI[CreatePaymentRequest,Payment](a).Post("/air/payments", &req).One(ctx)
+	return newRequestWithAPI[CreatePaymentRequest, Payment](a).Post("/air/payments", &req).Single(ctx)
 }
 
 var _ OrderPaymentClient = (*API)(nil)

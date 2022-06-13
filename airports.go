@@ -24,13 +24,13 @@ func (a *API) ListAirports(ctx context.Context, params ...ListAirportsParams) *I
 	return newRequestWithAPI[ListAirportsParams, Airport](a).
 		Get("/air/airports").
 		WithParams(normalizeParams(params)...).
-		All(ctx)
+		Iter(ctx)
 }
 
 func (a *API) GetAirport(ctx context.Context, id string) (*Airport, error) {
 	return newRequestWithAPI[EmptyPayload, Airport](a).
 		Getf("/air/airports/%s", id).
-		One(ctx)
+		Single(ctx)
 }
 
 func (p ListAirportsParams) Encode(q url.Values) error {

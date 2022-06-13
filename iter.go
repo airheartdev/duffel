@@ -16,6 +16,10 @@ type Iter[T any] struct {
 }
 
 func Collect[T any](it *Iter[T]) ([]*T, error) {
+	if it == nil {
+		return nil, nil
+	}
+
 	collection := make([]*T, 0)
 	for it.Next() {
 		collection = append(collection, it.Current())

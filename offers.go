@@ -67,7 +67,7 @@ const (
 // UpdateOfferPassenger updates a single offer passenger.
 func (a *API) UpdateOfferPassenger(ctx context.Context, offerRequestID, passengerID string, input PassengerUpdateInput) (*OfferRequestPassenger, error) {
 	url := fmt.Sprintf("/air/offers/%s/passengers/%s", offerRequestID, passengerID)
-	return newRequestWithAPI[PassengerUpdateInput, OfferRequestPassenger](a).Patch(url, &input).One(ctx)
+	return newRequestWithAPI[PassengerUpdateInput, OfferRequestPassenger](a).Patch(url, &input).Single(ctx)
 }
 
 // ListOffers lists all the offers for an offer request. Returns an iterator.
@@ -81,7 +81,7 @@ func (a *API) ListOffers(ctx context.Context, offerRequestID string, options ...
 	return newRequestWithAPI[ListOffersParams, Offer](a).Get("/air/offers").
 		WithParam("offer_request_id", offerRequestID).
 		WithParams(normalizeParams(options)...).
-		All(ctx)
+		Iter(ctx)
 }
 
 // GetOffer gets a single offer by ID.
@@ -93,7 +93,7 @@ func (a *API) GetOffer(ctx context.Context, offerID string, params ...GetOfferPa
 	return newRequestWithAPI[GetOfferParams, Offer](a).
 		Getf("/air/offers/%s", offerID).
 		WithParams(normalizeParams(params)...).
-		One(ctx)
+		Single(ctx)
 }
 
 func (o ListOffersParams) Encode(q url.Values) error {

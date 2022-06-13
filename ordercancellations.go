@@ -53,7 +53,7 @@ func (a *API) CreateOrderCancellation(ctx context.Context, orderID string) (*Ord
 		Post("/air/order_cancellations", &OrderCancellationRequest{
 			OrderID: orderID,
 		}).
-		One(ctx)
+		Single(ctx)
 }
 
 func (a *API) ConfirmOrderCancellation(ctx context.Context, orderCancellationID string) (*OrderCancellation, error) {
@@ -63,7 +63,7 @@ func (a *API) ConfirmOrderCancellation(ctx context.Context, orderCancellationID 
 
 	return newRequestWithAPI[EmptyPayload, OrderCancellation](a).
 		Post(fmt.Sprintf("/air/order_cancellations/%s/actions/confirm", orderCancellationID), nil).
-		One(ctx)
+		Single(ctx)
 }
 
 func (a *API) GetOrderCancellation(ctx context.Context, orderCancellationID string) (*OrderCancellation, error) {
@@ -73,7 +73,7 @@ func (a *API) GetOrderCancellation(ctx context.Context, orderCancellationID stri
 
 	return newRequestWithAPI[EmptyPayload, OrderCancellation](a).
 		Getf("/air/order_cancellations/%s", orderCancellationID).
-		One(ctx)
+		Single(ctx)
 }
 
 func (o *OrderCancellation) RefundAmount() currency.Amount {

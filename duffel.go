@@ -26,6 +26,7 @@ type (
 		AirportsClient
 		AirlinesClient
 		AircraftClient
+		PlacesClient
 	}
 
 	Gender string

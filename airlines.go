@@ -18,13 +18,13 @@ type (
 func (a *API) ListAirlines(ctx context.Context) *Iter[Airline] {
 	return newRequestWithAPI[EmptyPayload, Airline](a).
 		Get("/air/airlines").
-		All(ctx)
+		Iter(ctx)
 }
 
 func (a *API) GetAirline(ctx context.Context, id string) (*Airline, error) {
 	return newRequestWithAPI[EmptyPayload, Airline](a).
 		Getf("/air/airlines/%s", id).
-		One(ctx)
+		Single(ctx)
 }
 
 var _ AirlinesClient = (*API)(nil)

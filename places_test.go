@@ -19,6 +19,7 @@ func TestPlacesSuggestions(t *testing.T) {
 
 	gock.New("https://api.duffel.com").
 		Get("/places/suggestions").
+		MatchParam("query", "Lond").
 		Reply(200).
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").

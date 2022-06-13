@@ -138,4 +138,5 @@ To maintain simplicity and ease of use, this client library is hand-coded (inste
 
 ## License
 
-MIT License
+This source code is licensed under the Apache 2.0 license found
+in the LICENSE file in the root directory of this source tree.

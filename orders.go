@@ -1,3 +1,7 @@
+// Copyright 2021-present Airheart, Inc. All rights reserved.
+// This source code is licensed under the Apache 2.0 license found
+// in the LICENSE file in the root directory of this source tree.
+
 package duffel
 
 import (
@@ -197,23 +201,23 @@ const (
 
 // CreateOrder creates a new order.
 func (a *API) CreateOrder(ctx context.Context, input CreateOrderInput) (*Order, error) {
-	return newRequestWithAPI[CreateOrderInput, Order](a).Post("/air/orders", &input).One(ctx)
+	return newRequestWithAPI[CreateOrderInput, Order](a).Post("/air/orders", &input).Single(ctx)
 }
 
 func (a *API) UpdateOrder(ctx context.Context, id string, params OrderUpdateParams) (*Order, error) {
-	return newRequestWithAPI[OrderUpdateParams, Order](a).Patch("/air/orders/"+id, &params).One(ctx)
+	return newRequestWithAPI[OrderUpdateParams, Order](a).Patch("/air/orders/"+id, &params).Single(ctx)
 }
 
 // CreateOrder creates a new order.
 func (a *API) GetOrder(ctx context.Context, id string) (*Order, error) {
-	return newRequestWithAPI[EmptyPayload, Order](a).Get("/air/orders/" + id).One(ctx)
+	return newRequestWithAPI[EmptyPayload, Order](a).Get("/air/orders/" + id).Single(ctx)
 }
 
 func (a *API) ListOrders(ctx context.Context, params ...ListOrdersParams) *Iter[Order] {
 	return newRequestWithAPI[ListOrdersParams, Order](a).
 		Get("/air/orders").
 		WithParams(normalizeParams(params)...).
-		All(ctx)
+		Iter(ctx)
 }
 
 func (o *Order) BaseAmount() *currency.Amount {

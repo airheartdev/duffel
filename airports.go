@@ -1,3 +1,7 @@
+// Copyright 2021-present Airheart, Inc. All rights reserved.
+// This source code is licensed under the Apache 2.0 license found
+// in the LICENSE file in the root directory of this source tree.
+
 package duffel
 
 import (
@@ -20,13 +24,13 @@ func (a *API) ListAirports(ctx context.Context, params ...ListAirportsParams) *I
 	return newRequestWithAPI[ListAirportsParams, Airport](a).
 		Get("/air/airports").
 		WithParams(normalizeParams(params)...).
-		All(ctx)
+		Iter(ctx)
 }
 
 func (a *API) GetAirport(ctx context.Context, id string) (*Airport, error) {
 	return newRequestWithAPI[EmptyPayload, Airport](a).
 		Getf("/air/airports/%s", id).
-		One(ctx)
+		Single(ctx)
 }
 
 func (p ListAirportsParams) Encode(q url.Values) error {

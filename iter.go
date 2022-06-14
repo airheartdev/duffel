@@ -1,3 +1,7 @@
+// Copyright 2021-present Airheart, Inc. All rights reserved.
+// This source code is licensed under the Apache 2.0 license found
+// in the LICENSE file in the root directory of this source tree.
+
 package duffel
 
 // Iter is an iterator for a list of items.
@@ -12,6 +16,10 @@ type Iter[T any] struct {
 }
 
 func Collect[T any](it *Iter[T]) ([]*T, error) {
+	if it == nil {
+		return nil, nil
+	}
+
 	collection := make([]*T, 0)
 	for it.Next() {
 		collection = append(collection, it.Current())

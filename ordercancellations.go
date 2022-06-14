@@ -1,3 +1,7 @@
+// Copyright 2021-present Airheart, Inc. All rights reserved.
+// This source code is licensed under the Apache 2.0 license found
+// in the LICENSE file in the root directory of this source tree.
+
 package duffel
 
 import (
@@ -49,7 +53,7 @@ func (a *API) CreateOrderCancellation(ctx context.Context, orderID string) (*Ord
 		Post("/air/order_cancellations", &OrderCancellationRequest{
 			OrderID: orderID,
 		}).
-		One(ctx)
+		Single(ctx)
 }
 
 func (a *API) ConfirmOrderCancellation(ctx context.Context, orderCancellationID string) (*OrderCancellation, error) {
@@ -59,7 +63,7 @@ func (a *API) ConfirmOrderCancellation(ctx context.Context, orderCancellationID 
 
 	return newRequestWithAPI[EmptyPayload, OrderCancellation](a).
 		Post(fmt.Sprintf("/air/order_cancellations/%s/actions/confirm", orderCancellationID), nil).
-		One(ctx)
+		Single(ctx)
 }
 
 func (a *API) GetOrderCancellation(ctx context.Context, orderCancellationID string) (*OrderCancellation, error) {
@@ -69,7 +73,7 @@ func (a *API) GetOrderCancellation(ctx context.Context, orderCancellationID stri
 
 	return newRequestWithAPI[EmptyPayload, OrderCancellation](a).
 		Getf("/air/order_cancellations/%s", orderCancellationID).
-		One(ctx)
+		Single(ctx)
 }
 
 func (o *OrderCancellation) RefundAmount() currency.Amount {

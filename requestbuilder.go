@@ -1,3 +1,7 @@
+// Copyright 2021-present Airheart, Inc. All rights reserved.
+// This source code is licensed under the Apache 2.0 license found
+// in the LICENSE file in the root directory of this source tree.
+
 package duffel
 
 import (
@@ -160,8 +164,8 @@ func (r *RequestBuilder[Req, Resp]) Patch(path string, body *Req, opts ...Reques
 	return r
 }
 
-// All finalizes the request and returns an iterator over the response.
-func (r *RequestBuilder[Req, Resp]) All(ctx context.Context) *Iter[Resp] {
+// Iter finalizes the request and returns an iterator over the response.
+func (r *RequestBuilder[Req, Resp]) Iter(ctx context.Context) *Iter[Resp] {
 	return GetIter(func(lastMeta *ListMeta) (*List[Resp], error) {
 		ctx, cancel := context.WithDeadline(ctx, time.Now().Add(90*time.Second))
 		defer cancel()
@@ -184,8 +188,28 @@ func (r *RequestBuilder[Req, Resp]) All(ctx context.Context) *Iter[Resp] {
 	})
 }
 
-// One finalizes the request and returns a single item response.
-func (r *RequestBuilder[Req, Resp]) One(ctx context.Context) (*Resp, error) {
+// Slice finalizes the request and returns the first page of items as a slice along with the error.
+// This is only needed for endpoints without pagination, such as place suggestions.
+func (r *RequestBuilder[Req, Resp]) Slice(ctx context.Context) ([]*Resp, error) {
+	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(90*time.Second))
+	defer cancel()
+
+	response, err := r.makeRequest(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to make request")
+	}
+
+	container := new(ResponsePayload[[]*Resp])
+	err = decodeResponse(response, &container)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode response")
+	}
+
+	return container.Data, nil
+}
+
+// Single finalizes the request and returns a single item response.
+func (r *RequestBuilder[Req, Resp]) Single(ctx context.Context) (*Resp, error) {
 	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(90*time.Second))
 	defer cancel()
 

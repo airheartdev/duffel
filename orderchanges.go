@@ -1,3 +1,7 @@
+// Copyright 2021-present Airheart, Inc. All rights reserved.
+// This source code is licensed under the Apache 2.0 license found
+// in the LICENSE file in the root directory of this source tree.
+
 // Order change flow:
 // 1. Get an existing order by ID using client.GetOrder(...)
 // 2. Create a new order change request using client.CreateOrderChangeRequest(...)
@@ -107,7 +111,7 @@ type (
 func (a *API) CreateOrderChangeRequest(ctx context.Context, params OrderChangeRequestParams) (*OrderChangeRequest, error) {
 	return newRequestWithAPI[OrderChangeRequestParams, OrderChangeRequest](a).
 		Post("/air/order_change_requests", &params).
-		One(ctx)
+		Single(ctx)
 }
 
 func (a *API) GetOrderChangeRequest(ctx context.Context, orderChangeRequestID string) (*OrderChangeRequest, error) {
@@ -116,7 +120,7 @@ func (a *API) GetOrderChangeRequest(ctx context.Context, orderChangeRequestID st
 	}
 	return newRequestWithAPI[EmptyPayload, OrderChangeRequest](a).
 		Getf("/air/order_change_requests/%s", orderChangeRequestID).
-		One(ctx)
+		Single(ctx)
 }
 
 func (a *API) CreatePendingOrderChange(ctx context.Context, offerID string) (*OrderChange, error) {
@@ -126,7 +130,7 @@ func (a *API) CreatePendingOrderChange(ctx context.Context, offerID string) (*Or
 	return newRequestWithAPI[map[string]string, OrderChange](a).
 		Postf("/air/order_changes").
 		Body(&map[string]string{"selected_order_change_offer": offerID}).
-		One(ctx)
+		Single(ctx)
 }
 
 func (a *API) ConfirmOrderChange(ctx context.Context, orderChangeRequestID string, payment PaymentCreateInput) (*OrderChange, error) {
@@ -136,7 +140,7 @@ func (a *API) ConfirmOrderChange(ctx context.Context, orderChangeRequestID strin
 	return newRequestWithAPI[PaymentCreateInput, OrderChange](a).
 		Postf("/air/order_changes/%s/actions/confirm", orderChangeRequestID).
 		Body(&payment).
-		One(ctx)
+		Single(ctx)
 }
 
 var _ OrderChangeClient = (*API)(nil)

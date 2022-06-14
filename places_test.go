@@ -13,39 +13,30 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestCreatePayment(t *testing.T) {
+func TestPlacesSuggestions(t *testing.T) {
 	defer gock.Off()
 	a := assert.New(t)
 
 	gock.New("https://api.duffel.com").
-		Post("/air/payments").
+		Get("/places/suggestions").
+		MatchParam("query", "Lond").
 		Reply(200).
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
 		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
 		SetHeader("Date", time.Now().Format(time.RFC1123)).
-		File("fixtures/200-create-payment.json")
-
-	expected := &Payment{
-		Type:      PaymentTypeBalance,
-		Amount:    "30.20",
-		ID:        "pay_00009hthhsUZ8W4LxQgkjo",
-		Currency:  "GBP",
-		LiveMode:  false,
-		CreatedAt: DateTime(time.Date(2020, 04, 11, 15, 48, 11, 642000000, time.UTC)),
-	}
+		File("fixtures/200-get-places-suggestion.json")
 
 	ctx := context.TODO()
 
 	client := New("duffel_test_123")
-	payment, err := client.CreatePayment(ctx, CreatePaymentRequest{
-		OrderID: "ord_00003x8pVDGcS8y2AWCoWv",
-		Payment: CreatePayment{
-			Amount:   "30.20",
-			Currency: "GBP",
-			Type:     PaymentTypeBalance,
-		}})
-
+	places, err := client.PlaceSuggestions(ctx, "Lond")
 	a.NoError(err)
-	a.Equal(expected, payment)
+	a.NotNil(places)
+
+	a.Equal("Heathrow", places[0].Name)
+	a.Equal("EGLL", places[0].ICAOCode)
+	a.Equal("London", places[0].City.Name)
+	a.Equal("London", places[0].CityName)
+	a.Equal("Heathrow", places[0].Airports[0].Name)
 }

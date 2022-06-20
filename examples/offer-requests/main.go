@@ -16,7 +16,7 @@ import (
 
 func main() {
 	apiToken := os.Getenv("DUFFEL_TOKEN")
-	client := duffel.New(apiToken)
+	client := duffel.New(apiToken, duffel.WithDebug())
 
 	// childAge := 1
 
@@ -45,13 +45,13 @@ func main() {
 		CabinClass: duffel.CabinClassEconomy,
 		Slices: []duffel.OfferRequestSlice{
 			{
-				DepartureDate: duffel.Date(time.Date(2022, time.June, 24, 0, 0, 0, 0, time.UTC)),
+				DepartureDate: duffel.Date(time.Date(2022, time.July, 24, 0, 0, 0, 0, time.UTC)),
 				Origin:        "AUS",
-				Destination:   "MSP",
+				Destination:   "SYD",
 			},
 			{
-				DepartureDate: duffel.Date(time.Date(2022, time.June, 26, 0, 0, 0, 0, time.UTC)),
-				Origin:        "MSP",
+				DepartureDate: duffel.Date(time.Date(2022, time.August, 26, 0, 0, 0, 0, time.UTC)),
+				Origin:        "SYD",
 				Destination:   "AUS",
 			},
 		},

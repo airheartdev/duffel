@@ -145,6 +145,24 @@ func decodeError(response *http.Response) error {
 		return err
 	}
 
+	contentType := response.Header.Get("Content-Type")
+
+	if strings.HasPrefix(contentType, "text/html") {
+		// Handle occasional HTML error pages at routing layer
+		return &DuffelError{
+			StatusCode: response.StatusCode,
+			Retryable:  true,
+			Errors: []Error{
+				{
+					Type:    ErrorType(InternalServerError),
+					Title:   http.StatusText(response.StatusCode),
+					Message: "An internal server error occurred. Please try again later.",
+					Code:    InternalServerError,
+				},
+			},
+		}
+	}
+
 	notRetryable := strings.HasPrefix(response.Request.URL.Path, "/air/orders") &&
 		response.StatusCode == http.StatusInternalServerError
 

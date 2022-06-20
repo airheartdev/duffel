@@ -95,9 +95,11 @@ type (
 	}
 
 	Airline struct {
-		Name     string `json:"name"`
-		IATACode string `json:"iata_code"`
-		ID       string `json:"id"`
+		Name          string `json:"name"`
+		IATACode      string `json:"iata_code"`
+		ID            string `json:"id"`
+		LogoSymbolURL string `json:"logo_symbol_url"`
+		LogoLockupURL string `json:"logo_lockup_url"`
 	}
 
 	Airport struct {

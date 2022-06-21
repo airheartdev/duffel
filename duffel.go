@@ -68,8 +68,8 @@ type (
 		Distance                     Distance           `json:"distance,omitempty"`
 		DestinationTerminal          string             `json:"destination_terminal"`
 		Destination                  Location           `json:"destination"`
-		DepartingAt                  DateTime           `json:"departing_at"`
-		ArrivingAt                   DateTime           `json:"arriving_at"`
+		RawDepartingAt               string             `json:"departing_at"`
+		RawArrivingAt                string             `json:"arriving_at"`
 		Aircraft                     Aircraft           `json:"aircraft"`
 	}
 

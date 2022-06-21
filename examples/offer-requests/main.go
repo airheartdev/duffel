@@ -85,7 +85,10 @@ func main() {
 			fmt.Printf("    🛫 %s to %s\n", *s.Origin.CityName, *s.Destination.CityName)
 
 			for _, f := range s.Segments {
-				fmt.Printf("    Departing at %s • Arriving at %s\n", f.DepartingAt, f.ArrivingAt)
+				dep, _ := f.DepartingAt()
+				arr, _ := f.ArrivingAt()
+
+				fmt.Printf("    Departing at %s • Arriving at %s\n", dep, arr)
 			}
 
 			fmt.Printf("    🛬 %s • %s\n", s.FareBrandName, time.Duration(s.Duration).String())

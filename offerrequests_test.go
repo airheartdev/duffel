@@ -88,6 +88,16 @@ func TestGetOfferRequest(t *testing.T) {
 	a.Equal("airport", data.Offers[0].Slices[0].DestinationType)
 	a.Equal(false, data.Offers[0].Slices[0].Changeable)
 	a.Equal("Refundable Main Cabin", data.Offers[0].Slices[0].FareBrandName)
+
+	// Assert that departing at is in the correct timezone
+	dep, err := data.Offers[0].Slices[0].Segments[0].DepartingAt()
+	a.NoError(err)
+	est, _ := time.LoadLocation("America/New_York")
+	a.True(dep.Equal(time.Date(2021, time.December, 30, 8, 55, 0, 0, est)), "Departure time should be in EST")
+
+	arr, err := data.Offers[0].Slices[0].Segments[0].ArrivingAt()
+	a.NoError(err)
+	a.True(arr.Equal(time.Date(2021, time.December, 30, 12, 07, 0, 0, est)), "Arrival time should be in EST")
 }
 
 func TestListOfferRequests(t *testing.T) {

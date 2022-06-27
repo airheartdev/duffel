@@ -37,8 +37,10 @@ type (
 		Owner                              Airline                 `json:"owner"`
 		Slices                             []Slice                 `json:"slices"`
 		Passengers                         []OfferRequestPassenger `json:"passengers"`
+		Partial                            bool                    `json:"partial"`
 		PassengerIdentityDocumentsRequired bool                    `json:"passenger_identity_documents_required"`
 		PaymentRequirements                OfferPaymentRequirement `json:"payment_requirements"`
+		AvailableServices                  []Service               `json:"available_services"`
 	}
 
 	OfferPaymentRequirement struct {

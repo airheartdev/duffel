@@ -18,6 +18,8 @@ import (
 	"github.com/segmentio/encoding/json"
 )
 
+const RequestIDHeader = "x-request-id"
+
 type Payload[T any] struct {
 	Data T `json:"data"`
 }

@@ -20,6 +20,7 @@ func TestGetSeatmaps(t *testing.T) {
 		Get("/air/seat_maps").
 		MatchParam("offer_id", "off_00009htYpSCXrwaB9DnUm0").
 		Reply(200).
+		SetHeader(RequestIDHeader, "FvxRwfnMtKgc0EwCCoXE").
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
 		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
@@ -34,9 +35,11 @@ func TestGetSeatmaps(t *testing.T) {
 	iter.Next()
 	data := iter.Current()
 	err := iter.Err()
+	reqID, _ := iter.LastRequestID()
 
 	a.NoError(err)
 	a.NotNil(data)
+	a.Equal("FvxRwfnMtKgc0EwCCoXE", reqID)
 
 	a.Equal("sea_00003hthlsHZ8W4LxXjkzo", data.ID)
 	a.Equal("seg_00009htYpSCXrwaB9Dn456", data.SegmentID)

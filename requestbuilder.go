@@ -22,7 +22,6 @@ type RequestBuilder[Req any, Resp any] struct {
 	resourcePath   string
 	requestOptions []RequestOption
 	body           *Req
-	params         url.Values
 }
 
 type RequestMiddleware func(r *http.Request) error
@@ -184,6 +183,7 @@ func (r *RequestBuilder[Req, Resp]) Iter(ctx context.Context) *Iter[Resp] {
 
 		list.SetListMeta(container.Meta)
 		list.SetItems(container.Data)
+		list.setRequestID(response.Header.Get(RequestIDHeader))
 		return list, nil
 	})
 }

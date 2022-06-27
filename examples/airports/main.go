@@ -27,6 +27,10 @@ func main() {
 		airport := iter.Current()
 		cache[airport.ID] = airport
 		fmt.Printf("%s (%s) - %s, %s\n", airport.Name, airport.IATACode, airport.CityName, airport.IATACountryCode)
+
+		if lastRequestID, ok := iter.LastRequestID(); ok {
+			fmt.Printf("Last request ID: %s\n", lastRequestID)
+		}
 	}
 	if iter.Err() != nil {
 		log.Fatalln(iter.Err())
@@ -40,8 +44,8 @@ func main() {
 	}
 
 	rows := []*duffel.Airport{}
-	for _, airline := range cache {
-		rows = append(rows, airline)
+	for _, airport := range cache {
+		rows = append(rows, airport)
 	}
 
 	err = json.NewEncoder(csvFilePath).Encode(rows)

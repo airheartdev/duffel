@@ -27,6 +27,8 @@ type (
 		AirlinesClient
 		AircraftClient
 		PlacesClient
+
+		LastRequestID() (string, bool)
 	}
 
 	Gender string
@@ -239,17 +241,19 @@ type (
 	}
 
 	client[Req any, Resp any] struct {
-		httpDoer  *http.Client
-		APIToken  string
-		options   *Options
-		limiter   *rate.Limiter
-		rateLimit *RateLimit
+		httpDoer      *http.Client
+		APIToken      string
+		options       *Options
+		limiter       *rate.Limiter
+		rateLimit     *RateLimit
+		afterResponse []func(resp *http.Response)
 	}
 
 	API struct {
-		httpDoer *http.Client
-		APIToken string
-		options  *Options
+		httpDoer      *http.Client
+		APIToken      string
+		options       *Options
+		lastRequestID string
 	}
 )
 
@@ -298,6 +302,10 @@ func New(apiToken string, opts ...Option) Duffel {
 		APIToken: apiToken,
 		options:  options,
 	}
+}
+
+func (a *API) LastRequestID() (string, bool) {
+	return a.lastRequestID, a.lastRequestID != ""
 }
 
 // Assert that our interface matches

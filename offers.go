@@ -25,22 +25,26 @@ type (
 	}
 
 	Offer struct {
-		ID                                 string                  `json:"id"`
-		LiveMode                           bool                    `json:"live_mode"`
-		CreatedAt                          time.Time               `json:"created_at"`
-		UpdatedAt                          time.Time               `json:"updated_at"`
-		TotalEmissionsKg                   string                  `json:"total_emissions_kg"`
-		RawTotalCurrency                   string                  `json:"total_currency"`
-		RawTotalAmount                     string                  `json:"total_amount"`
-		RawTaxAmount                       string                  `json:"tax_amount"`
-		RawTaxCurrency                     string                  `json:"tax_currency"`
-		Owner                              Airline                 `json:"owner"`
-		Slices                             []Slice                 `json:"slices"`
-		Passengers                         []OfferRequestPassenger `json:"passengers"`
-		Partial                            bool                    `json:"partial"`
-		PassengerIdentityDocumentsRequired bool                    `json:"passenger_identity_documents_required"`
-		PaymentRequirements                OfferPaymentRequirement `json:"payment_requirements"`
-		AvailableServices                  []Service               `json:"available_services"`
+		ID                                    string                  `json:"id"`
+		LiveMode                              bool                    `json:"live_mode"`
+		CreatedAt                             time.Time               `json:"created_at"`
+		UpdatedAt                             time.Time               `json:"updated_at"`
+		ExpiresAt                             time.Time               `json:"expires_at"`
+		TotalEmissionsKg                      string                  `json:"total_emissions_kg"`
+		RawTotalCurrency                      string                  `json:"total_currency"`
+		RawTotalAmount                        string                  `json:"total_amount"`
+		RawTaxAmount                          string                  `json:"tax_amount"`
+		RawTaxCurrency                        string                  `json:"tax_currency"`
+		RawBaseAmount                         string                  `json:"base_amount"`
+		RawBaseCurrency                       string                  `json:"base_currency"`
+		Owner                                 Airline                 `json:"owner"`
+		Slices                                []Slice                 `json:"slices"`
+		Passengers                            []OfferRequestPassenger `json:"passengers"`
+		Partial                               bool                    `json:"partial"`
+		PassengerIdentityDocumentsRequired    bool                    `json:"passenger_identity_documents_required"`
+		AllowedPassengerIdentityDocumentTypes []string                `json:"allowed_passenger_identity_document_types"`
+		PaymentRequirements                   OfferPaymentRequirement `json:"payment_requirements"`
+		AvailableServices                     []Service               `json:"available_services"`
 	}
 
 	OfferPaymentRequirement struct {
@@ -117,6 +121,13 @@ func (o GetOfferParams) Encode(q url.Values) error {
 	return nil
 }
 
+func (o *Offer) BaseAmount() currency.Amount {
+	amount, err := currency.NewAmount(o.RawBaseAmount, o.RawBaseCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
+}
 func (o *Offer) TotalAmount() currency.Amount {
 	amount, err := currency.NewAmount(o.RawTotalAmount, o.RawTotalCurrency)
 	if err != nil {

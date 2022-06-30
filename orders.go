@@ -41,9 +41,13 @@ type (
 		RawTotalCurrency string           `json:"total_currency"`
 	}
 
-	Conditions struct {
+	SliceConditions struct {
 		ChangeBeforeDeparture *ChangeCondition `json:"change_before_departure,omitempty"`
+	}
+
+	Conditions struct {
 		RefundBeforeDeparture *ChangeCondition `json:"refund_before_departure,omitempty"`
+		ChangeBeforeDeparture *ChangeCondition `json:"change_before_departure,omitempty"`
 	}
 
 	ChangeCondition struct {

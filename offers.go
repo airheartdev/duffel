@@ -45,6 +45,7 @@ type (
 		AllowedPassengerIdentityDocumentTypes []string                `json:"allowed_passenger_identity_document_types"`
 		PaymentRequirements                   OfferPaymentRequirement `json:"payment_requirements"`
 		AvailableServices                     []Service               `json:"available_services"`
+		Conditions                            Conditions              `json:"conditions"`
 	}
 
 	OfferPaymentRequirement struct {

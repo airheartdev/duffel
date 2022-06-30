@@ -51,10 +51,10 @@ type (
 		Changeable bool `json:"changeable,omitempty"`
 
 		// The conditions associated with this slice, describing the kinds of modifications you can make and any penalties that will apply to those modifications.
-		Conditions    Conditions `json:"conditions,omitempty"`
-		Duration      Duration   `json:"duration,omitempty"`
-		Segments      []Flight   `json:"segments,omitempty"`
-		FareBrandName string     `json:"fare_brand_name,omitempty"`
+		Conditions    SliceConditions `json:"conditions,omitempty"`
+		Duration      Duration        `json:"duration,omitempty"`
+		Segments      []Flight        `json:"segments,omitempty"`
+		FareBrandName string          `json:"fare_brand_name,omitempty"`
 	}
 
 	Flight struct {

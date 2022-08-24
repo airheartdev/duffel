@@ -14,12 +14,19 @@ import (
 )
 
 func newInternalClient[Req any, Resp any](a *API) *client[Req, Resp] {
-	return &client[Req, Resp]{
+	client := &client[Req, Resp]{
 		httpDoer: a.httpDoer,
 		options:  a.options,
 		APIToken: a.APIToken,
 		limiter:  rate.NewLimiter(rate.Every(1*time.Second), 5),
+		afterResponse: []func(resp *http.Response){
+			func(resp *http.Response) {
+				a.lastRequestID = resp.Header.Get(RequestIDHeader)
+			},
+		},
 	}
+
+	return client
 }
 
 func (c *client[Req, Resp]) Do(ctx context.Context, resourceName string, method string, body *Req, opts ...RequestOption) (*http.Response, error) {
@@ -36,6 +43,10 @@ func (c *client[Req, Resp]) Do(ctx context.Context, resourceName string, method 
 	resp, err := c.makeRequest(ctx, resourceName, method, payload, opts...)
 	if err != nil {
 		return nil, err
+	}
+
+	for _, afterResponse := range c.afterResponse {
+		afterResponse(resp)
 	}
 
 	rateLimit, err := parseRateLimit(resp)

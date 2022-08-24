@@ -25,20 +25,50 @@ type (
 	}
 
 	Offer struct {
-		ID                                 string                  `json:"id"`
-		LiveMode                           bool                    `json:"live_mode"`
-		CreatedAt                          time.Time               `json:"created_at"`
-		UpdatedAt                          time.Time               `json:"updated_at"`
-		TotalEmissionsKg                   string                  `json:"total_emissions_kg"`
-		RawTotalCurrency                   string                  `json:"total_currency"`
-		RawTotalAmount                     string                  `json:"total_amount"`
-		RawTaxAmount                       string                  `json:"tax_amount"`
-		RawTaxCurrency                     string                  `json:"tax_currency"`
-		Owner                              Airline                 `json:"owner"`
-		Slices                             []Slice                 `json:"slices"`
-		Passengers                         []OfferRequestPassenger `json:"passengers"`
-		PassengerIdentityDocumentsRequired bool                    `json:"passenger_identity_documents_required"`
-		PaymentRequirements                OfferPaymentRequirement `json:"payment_requirements"`
+		ID                                    string                  `json:"id"`
+		LiveMode                              bool                    `json:"live_mode"`
+		CreatedAt                             time.Time               `json:"created_at"`
+		UpdatedAt                             time.Time               `json:"updated_at"`
+		ExpiresAt                             time.Time               `json:"expires_at"`
+		TotalEmissionsKg                      string                  `json:"total_emissions_kg"`
+		RawTotalCurrency                      string                  `json:"total_currency"`
+		RawTotalAmount                        string                  `json:"total_amount"`
+		RawTaxAmount                          string                  `json:"tax_amount"`
+		RawTaxCurrency                        string                  `json:"tax_currency"`
+		RawBaseAmount                         string                  `json:"base_amount"`
+		RawBaseCurrency                       string                  `json:"base_currency"`
+		Owner                                 Airline                 `json:"owner"`
+		Slices                                []Slice                 `json:"slices"`
+		Passengers                            []OfferRequestPassenger `json:"passengers"`
+		Partial                               bool                    `json:"partial"`
+		PassengerIdentityDocumentsRequired    bool                    `json:"passenger_identity_documents_required"`
+		AllowedPassengerIdentityDocumentTypes []string                `json:"allowed_passenger_identity_document_types"`
+		PaymentRequirements                   OfferPaymentRequirement `json:"payment_requirements"`
+		AvailableServices                     []AvailableService      `json:"available_services"`
+		Conditions                            Conditions              `json:"conditions"`
+	}
+
+	AvailableService struct {
+		// Duffel's unique identifier for service
+		ID               string                   `json:"id"`
+		MaximumQuantity  int                      `json:"maximum_quantity"`
+		Metadata         AvailableServiceMetadata `json:"metadata"`
+		PassengerIDs     []string                 `json:"passenger_ids"`
+		SegmentIDs       []string                 `json:"segment_ids"`
+		RawTotalAmount   string                   `json:"total_amount"`
+		RawTotalCurrency string                   `json:"total_currency"`
+
+		// Possible values: "baggage"
+		Type string `json:"type"`
+	}
+
+	AvailableServiceMetadata struct {
+		MaximumDepthCM  int `json:"maximum_depth_cm,omitempty"`
+		MaximumHeightCM int `json:"maximum_height_cm,omitempty"`
+		MaximumLengthCM int `json:"maximum_length_cm,omitempty"`
+		MaximumWeightKg int `json:"maximum_weight_kg,omitempty"`
+		// Possible values: "checked", "carry_on"
+		Type string `json:"type"`
 	}
 
 	OfferPaymentRequirement struct {
@@ -115,6 +145,13 @@ func (o GetOfferParams) Encode(q url.Values) error {
 	return nil
 }
 
+func (o *Offer) BaseAmount() currency.Amount {
+	amount, err := currency.NewAmount(o.RawBaseAmount, o.RawBaseCurrency)
+	if err != nil {
+		return currency.Amount{}
+	}
+	return amount
+}
 func (o *Offer) TotalAmount() currency.Amount {
 	amount, err := currency.NewAmount(o.RawTotalAmount, o.RawTotalCurrency)
 	if err != nil {

@@ -13,5 +13,6 @@ vendor
 *.out
 
 # Dependency directories (remove the comment below to include it)
-examples/.DS_Store
-vendor/
+vendor
+
+*.DS_Store

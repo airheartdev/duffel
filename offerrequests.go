@@ -26,11 +26,11 @@ type (
 		// The cabin that the passengers want to travel in
 		CabinClass CabinClass `json:"cabin_class" url:"-"`
 		// The maximum number of connections within any slice of the offer. For example 0 means a direct flight which will have a single segment within each slice and 1 means a maximum of two segments within each slice of the offer.
-		MaxConnections int `json:"max_connections" url:"-"`
+		MaxConnections *int `json:"max_connections,omitempty" url:"-"`
 		// When set to true, the offer request resource returned will include all the offers returned by the airlines
 		ReturnOffers bool `json:"-" url:"return_offers"`
 		// The maximum amount of time in milliseconds to wait for each airline to respond
-		SupplierTimeout int `json:"-" url:"supplier_timeout"`
+		SupplierTimeout int `json:"-" url:"supplier_timeout,omitempty"`
 	}
 
 	OfferRequestSlice struct {

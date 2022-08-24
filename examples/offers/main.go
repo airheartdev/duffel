@@ -11,8 +11,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/thetreep/duffel"
+	"github.com/fatih/color"
 	"github.com/urfave/cli/v2"
+
+	"github.com/thetreep/duffel"
 )
 
 func main() {
@@ -90,6 +92,18 @@ func main() {
 						ArgsUsage: "OFFER_REQUEST_ID",
 						Aliases:   []string{"l"},
 						Usage:     "List offers for a given request",
+					},
+					{
+						Name:      "get",
+						Action:    getOfferAction,
+						ArgsUsage: "OFFER_ID",
+						Usage:     "Get a single offer by ID e.g. off_0000AKzq9VM7JGL9kddOcy",
+					},
+					{
+						Name:      "seats",
+						Action:    getOfferSeatsAction,
+						ArgsUsage: "OFFER_ID",
+						Usage:     "Get seats for single offer by ID e.g. off_0000AKzq9VM7JGL9kddOcy",
 					},
 				},
 			},
@@ -191,9 +205,79 @@ func listOfferRequests(c *cli.Context) error {
 	return iter.Err()
 }
 
+func getOfferAction(c *cli.Context) error {
+	client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
+	offerID := c.Args().First()
+
+	off, err := client.GetOffer(c.Context, offerID, duffel.GetOfferParams{
+		ReturnAvailableServices: true,
+	})
+	if err != nil {
+		log.Printf("OfferID: %s", offerID)
+		return err
+	}
+
+	fmt.Printf("Offer: %s\n", offerID)
+
+	fmt.Println("Available services:")
+	for _, service := range off.AvailableServices {
+		fmt.Printf("  > %s segments: %+v price: %s\n", service.Type, service.SegmentIDs, service.RawTotalAmount)
+	}
+
+	fmt.Println("Conditions:")
+	for _, slc := range off.Slices {
+		fmt.Printf("  > %s - %s %s changeable: %v\n", slc.Origin.Name, slc.Destination.Name, slc.FareBrandName, slc.Changeable)
+
+		if slc.Conditions.ChangeBeforeDeparture != nil {
+			fmt.Printf("  > Change before departure: %v\n", slc.Conditions.ChangeBeforeDeparture.Allowed)
+		}
+	}
+
+	return nil
+}
+
+func getOfferSeatsAction(c *cli.Context) error {
+	client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
+	offerID := c.Args().First()
+
+	seats, err := client.GetSeatmap(c.Context, offerID)
+	if err != nil {
+		log.Printf("OfferID: %s", offerID)
+		return err
+	}
+
+	fmt.Printf("Offer: %s\n", offerID)
+
+	green := color.New(color.FgGreen)
+	red := color.New(color.FgRed)
+
+	fmt.Println("Seatmap:")
+	for _, seat := range seats {
+		fmt.Printf("Slice: %s\n", seat.SliceID)
+		for _, cabin := range seat.Cabins {
+			fmt.Printf("%s\n", cabin.CabinClass)
+
+			for _, row := range cabin.Rows {
+				fmt.Printf("\n")
+				for _, section := range row.Sections {
+					for _, el := range section.Elements {
+						if len(el.AvailableServices) > 0 {
+							fmt.Print(green.Sprintf("%-3s ", el.Designator))
+						} else {
+							fmt.Print(red.Sprintf("%-3s ", el.Designator))
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func listOffersAction(c *cli.Context) error {
 	client := duffel.New(os.Getenv("DUFFEL_TOKEN"))
-
 	requestID := c.Args().First()
 	iter := client.ListOffers(c.Context, requestID, duffel.ListOffersParams{
 		MaxConnections: 1,

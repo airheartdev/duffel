@@ -20,6 +20,7 @@ func TestGetSeatmaps(t *testing.T) {
 		Get("/air/seat_maps").
 		MatchParam("offer_id", "off_00009htYpSCXrwaB9DnUm0").
 		Reply(200).
+		SetHeader(RequestIDHeader, "FvxRwfnMtKgc0EwCCoXE").
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
 		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
@@ -29,19 +30,18 @@ func TestGetSeatmaps(t *testing.T) {
 	ctx := context.TODO()
 
 	client := New("duffel_test_123")
-	iter := client.GetSeatmaps(ctx, "off_00009htYpSCXrwaB9DnUm0")
-
-	iter.Next()
-	data := iter.Current()
-	err := iter.Err()
-
+	seats, err := client.GetSeatmap(ctx, "off_00009htYpSCXrwaB9DnUm0")
 	a.NoError(err)
-	a.NotNil(data)
+	reqID, _ := client.LastRequestID()
 
-	a.Equal("sea_00003hthlsHZ8W4LxXjkzo", data.ID)
-	a.Equal("seg_00009htYpSCXrwaB9Dn456", data.SegmentID)
-	a.Equal("sli_00009htYpSCXrwaB9Dn123", data.SliceID)
+	a.NotNil(seats)
+	a.Equal("FvxRwfnMtKgc0EwCCoXE", reqID)
 
-	serviceAmount := data.Cabins[0].Rows[0].Sections[0].Elements[0].AvailableServices[0].TotalAmount().String()
+	seat := seats[0]
+	a.Equal("sea_00003hthlsHZ8W4LxXjkzo", seat.ID)
+	a.Equal("seg_00009htYpSCXrwaB9Dn456", seat.SegmentID)
+	a.Equal("sli_00009htYpSCXrwaB9Dn123", seat.SliceID)
+
+	serviceAmount := seat.Cabins[0].Rows[0].Sections[0].Elements[0].AvailableServices[0].TotalAmount().String()
 	a.Equal("30.00 GBP", serviceAmount)
 }

@@ -79,12 +79,15 @@ func main() {
 
 		for _, slice := range offer.Slices {
 			for _, segment := range slice.Segments {
+				dep, _ := segment.DepartingAt()
+				arr, _ := segment.ArrivingAt()
 				t.AppendRow(table.Row{
 					slice.ID,
 					segment.Origin.IATACode,
 					segment.Destination.IATACode,
-					time.Time(segment.DepartingAt).Format(time.RFC822),
-					time.Time(segment.ArrivingAt).Format(time.RFC822),
+
+					dep.Format(time.RFC822),
+					arr.Format(time.RFC822),
 					segment.Passengers[0].CabinClass.String(),
 					renderChangeableStatus(slice),
 				})
@@ -209,12 +212,15 @@ func main() {
 
 		for _, slice := range offer.Slices.Add {
 			for _, segment := range slice.Segments {
+				dep, _ := segment.DepartingAt()
+				arr, _ := segment.ArrivingAt()
+
 				t.AppendRow(table.Row{
 					fmt.Sprintf("Add %s", slice.ID),
 					segment.Origin.IATACode,
 					segment.Destination.IATACode,
-					time.Time(segment.DepartingAt).Format(time.RFC822),
-					time.Time(segment.ArrivingAt).Format(time.RFC822),
+					dep.Format(time.RFC822),
+					arr.Format(time.RFC822),
 					// segment.Passengers != nil && segment.Passengers[0].CabinClass.String(),
 					renderChangeableStatus(slice),
 				})
@@ -222,12 +228,14 @@ func main() {
 		}
 		for _, slice := range offer.Slices.Remove {
 			for _, segment := range slice.Segments {
+				dep, _ := segment.DepartingAt()
+				arr, _ := segment.ArrivingAt()
 				t.AppendRow(table.Row{
 					fmt.Sprintf("Remove %s", slice.ID),
 					segment.Origin.IATACode,
 					segment.Destination.IATACode,
-					time.Time(segment.DepartingAt).Format(time.RFC822),
-					time.Time(segment.ArrivingAt).Format(time.RFC822),
+					dep.Format(time.RFC822),
+					arr.Format(time.RFC822),
 					segment.Passengers[0].CabinClass.String(),
 					renderChangeableStatus(slice),
 				})

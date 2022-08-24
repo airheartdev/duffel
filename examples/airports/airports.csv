@@ -1,4 +1,4 @@
-id,name,city_id,city_name,city_iata_country_code,city_icao_code,city,city_name,iata_code,iata_country_code,icao_code,latitude,longitude,time_zone
+id,name,city_id,city_name,city_iata_country_code,city_icao_code,city,cities_name,iata_code,iata_country_code,icao_code,latitude,longitude,time_zone
 arp_poi_bo,Capitan Nicolas Rojas Airport,,,,,,Potosi,POI,BO,SLPO,-19.543259,-65.72338,America/La_Paz
 arp_cfk_dz,Chlef International Airport,,,,,,Chlef,CFK,DZ,DAOI,36.21428,1.329416,Africa/Algiers
 arp_ksj_gr,Kasos Island Public Airport,,,,,,Kasos Island,KSJ,GR,LGKS,35.42093,26.912174,Europe/Athens

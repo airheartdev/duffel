@@ -9,6 +9,8 @@ import "context"
 type (
 	PlacesClient interface {
 		PlaceSuggestions(ctx context.Context, query string) ([]*Place, error)
+		Cities(ctx context.Context) *Iter[City]
+		City(ctx context.Context, id string) (*City, error)
 	}
 
 	Place struct {
@@ -38,4 +40,12 @@ func (a *API) PlaceSuggestions(ctx context.Context, query string) ([]*Place, err
 	return newRequestWithAPI[EmptyPayload, Place](a).
 		Get("/places/suggestions").WithParam("query", query).
 		Slice(ctx)
+}
+
+func (a *API) Cities(ctx context.Context) *Iter[City] {
+	return newRequestWithAPI[EmptyPayload, City](a).Get("/air/cities").Iter(ctx)
+}
+
+func (a *API) City(ctx context.Context, id string) (*City, error) {
+	return newRequestWithAPI[EmptyPayload, City](a).Getf("/air/cities/%s", id).Single(ctx)
 }

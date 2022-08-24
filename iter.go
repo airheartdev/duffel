@@ -50,6 +50,10 @@ func (it *Iter[T]) Err() error {
 	return it.err
 }
 
+func (it *Iter[T]) LastRequestID() (string, bool) {
+	return it.list.LastRequestID()
+}
+
 // List returns the current list object which the iterator is currently using.
 // List objects will change as new API calls are made to continue pagination.
 func (it *Iter[T]) List() ListContainer[T] {

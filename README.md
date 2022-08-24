@@ -78,6 +78,36 @@ if err != nil  {
 // airports is a []*duffel.Airport
 ```
 
+## Request IDs
+
+Every response from Duffel includes a request ID that can be used to help debug issues with Duffel support. You should log the request ID for each operation in your app so that you can track down issues later on.
+
+```go
+dfl := duffel.New(os.Getenv("DUFFEL_TOKEN"))
+
+// Request IDs from Iterators:
+iter := dfl.ListAirports(ctx, duffel.ListAirportsParams{
+  IATACountryCode: "AU",
+})
+
+for iter.Next() {
+  airport := iter.Current()
+  fmt.Printf("%s\n", airport.Name)
+
+  if lastRequestID, ok:= iter.LastRequestID(); ok {
+    fmt.Printf("Last request ID: %s\n", lastRequestID)
+    // Note: each iteration might be from the same page of data with the same request ID.
+  }
+}
+
+// Request IDs from other operations
+data, err := client.CreateOfferRequest(context.Background(), duffel.OfferRequestInput{}
+// ...
+if lastRequestID, ok:= dfl.LastRequestID(); ok {
+  fmt.Printf("Last request ID: %s\n", lastRequestID)
+}
+```
+
 ## Error Handling
 
 Each API method returns an error or an iterator that returns errors at each iteration. If an error is returned from Duffel, it will be of type `DuffelError` and expose more details on how to handle it.

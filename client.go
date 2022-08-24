@@ -18,6 +18,8 @@ import (
 	"github.com/segmentio/encoding/json"
 )
 
+const RequestIDHeader = "x-request-id"
+
 type Payload[T any] struct {
 	Data T `json:"data"`
 }
@@ -143,6 +145,24 @@ func decodeError(response *http.Response) error {
 	reader, err := gzipResponseReader(response)
 	if err != nil {
 		return err
+	}
+
+	contentType := response.Header.Get("Content-Type")
+
+	if strings.HasPrefix(contentType, "text/html") {
+		// Handle occasional HTML error pages at routing layer
+		return &DuffelError{
+			StatusCode: response.StatusCode,
+			Retryable:  true,
+			Errors: []Error{
+				{
+					Type:    ErrorType(InternalServerError),
+					Title:   http.StatusText(response.StatusCode),
+					Message: "An internal server error occurred. Please try again later.",
+					Code:    InternalServerError,
+				},
+			},
+		}
 	}
 
 	notRetryable := strings.HasPrefix(response.Request.URL.Path, "/air/orders") &&

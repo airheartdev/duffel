@@ -36,6 +36,7 @@ func TestCreateOrder(t *testing.T) {
 		Post("/air/orders").
 		File("fixtures/201-create-order-input.json").
 		Reply(201).
+		SetHeader(RequestIDHeader, "FvxRwfnMtKgc0EwCCoXE").
 		SetHeader("Ratelimit-Limit", "5").
 		SetHeader("Ratelimit-Remaining", "5").
 		SetHeader("Ratelimit-Reset", time.Now().Format(time.RFC1123)).
@@ -85,6 +86,8 @@ func TestCreateOrder(t *testing.T) {
 		},
 	})
 	a.NoError(err)
+	reqID, _ := client.LastRequestID()
+	a.Equal("FvxRwfnMtKgc0EwCCoXE", reqID)
 	a.Equal("RZPNX8", order.BookingReference)
 	a.Equal("ord_00009hthhsUZ8W4LxQgkjo", order.ID)
 	a.Equal("100.00 GBP", order.Conditions.ChangeBeforeDeparture.PenaltyAmount().String())

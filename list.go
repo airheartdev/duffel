@@ -12,12 +12,16 @@ type ListContainer[T any] interface {
 	GetListMeta() *ListMeta
 	GetItems() []*T
 	SetItems(items []*T)
+	LastRequestID() (string, bool)
 }
 
 type List[T any] struct {
 	items []*T
 	// *Iter[T]
 	*ListMeta
+
+	// Duffel Request ID
+	lastRequestID string `json:"-" url:"-"`
 }
 
 func (l *List[T]) GetItems() []*T {
@@ -26,6 +30,14 @@ func (l *List[T]) GetItems() []*T {
 
 func (l *List[T]) SetItems(items []*T) {
 	l.items = items
+}
+
+func (l *List[T]) setRequestID(id string) {
+	l.lastRequestID = id
+}
+
+func (l *List[T]) LastRequestID() (string, bool) {
+	return l.lastRequestID, l.lastRequestID != ""
 }
 
 func (l *List[T]) SetListMeta(meta *ListMeta) {

@@ -41,3 +41,21 @@ func TestClientError(t *testing.T) {
 	a.True(ok)
 	a.Equal("FZW0H3HdJwKk5HMAAKxB", reqId)
 }
+
+func TestClientErrorBadGateway(t *testing.T) {
+	ctx := context.TODO()
+	a := assert.New(t)
+	gock.New("https://api.duffel.com/air/offer_requests").
+		Reply(502).
+		AddHeader("Content-Type", "text/html").
+		File("fixtures/502-bad-gateway.html")
+	defer gock.Off()
+
+	client := New("duffel_test_123")
+	data, err := client.CreateOfferRequest(ctx, OfferRequestInput{
+		ReturnOffers: true,
+	})
+	a.Error(err)
+	a.Nil(data)
+	a.Equal("duffel: An internal server error occurred. Please try again later.", err.Error())
+}

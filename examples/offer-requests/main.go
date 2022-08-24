@@ -16,11 +16,12 @@ import (
 
 func main() {
 	apiToken := os.Getenv("DUFFEL_TOKEN")
-	client := duffel.New(apiToken)
+	client := duffel.New(apiToken, duffel.WithDebug())
+	ctx := context.Background()
 
 	// childAge := 1
 
-	data, err := client.CreateOfferRequest(context.Background(), duffel.OfferRequestInput{
+	data, err := client.CreateOfferRequest(ctx, duffel.OfferRequestInput{
 		ReturnOffers: true,
 
 		Passengers: []duffel.OfferRequestPassenger{
@@ -45,13 +46,13 @@ func main() {
 		CabinClass: duffel.CabinClassEconomy,
 		Slices: []duffel.OfferRequestSlice{
 			{
-				DepartureDate: duffel.Date(time.Date(2022, time.June, 24, 0, 0, 0, 0, time.UTC)),
+				DepartureDate: duffel.Date(time.Date(2022, time.July, 24, 0, 0, 0, 0, time.UTC)),
 				Origin:        "AUS",
-				Destination:   "MSP",
+				Destination:   "SYD",
 			},
 			{
-				DepartureDate: duffel.Date(time.Date(2022, time.June, 26, 0, 0, 0, 0, time.UTC)),
-				Origin:        "MSP",
+				DepartureDate: duffel.Date(time.Date(2022, time.August, 26, 0, 0, 0, 0, time.UTC)),
+				Origin:        "SYD",
 				Destination:   "AUS",
 			},
 		},
@@ -70,6 +71,10 @@ func main() {
 	fmt.Println()
 
 	for _, offer := range data.Offers {
+		// if offer.Owner.IATACode != "AA" {
+		// 	continue
+		// }
+
 		fmt.Printf("===> Offer %s from %s\n     Passengers: ", offer.ID, offer.Owner.Name)
 		for i, p := range offer.Passengers {
 			fmt.Printf("(%s) %s %s", p.Type, p.GivenName, p.FamilyName)
@@ -85,11 +90,35 @@ func main() {
 			fmt.Printf("    🛫 %s to %s\n", *s.Origin.CityName, *s.Destination.CityName)
 
 			for _, f := range s.Segments {
-				fmt.Printf("    Departing at %s • Arriving at %s\n", f.DepartingAt, f.ArrivingAt)
+				dep, _ := f.DepartingAt()
+				arr, _ := f.ArrivingAt()
+
+				fmt.Printf("    Departing at %s • Arriving at %s\n", dep, arr)
 			}
 
 			fmt.Printf("    🛬 %s • %s\n", s.FareBrandName, time.Duration(s.Duration).String())
+
 		}
+
+		// seats, err := client.SeatmapForOffer(ctx, offer)
+		// if err != nil {
+		// 	log.Fatalln(err)
+		// }
+
+		// for _, seat := range seats {
+		// 	for _, cab := range seat.Cabins {
+		// 		for _, row := range cab.Rows {
+		// 			fmt.Println()
+		// 			for _, sec := range row.Sections {
+		// 				fmt.Println()
+		// 				for _, el := range sec.Elements {
+		// 					fmt.Printf("%s ", el.Designator)
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
+
 		fmt.Println()
 	}
 }

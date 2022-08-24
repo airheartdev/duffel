@@ -1,16 +1,16 @@
 module github.com/thetreep/duffel
 
-go 1.18
+go 1.19
 
 require (
-	github.com/bojanz/currency v1.0.3
+	github.com/bojanz/currency v1.0.4
 	github.com/gorilla/schema v1.2.0
-	github.com/jedib0t/go-pretty/v6 v6.3.2
+	github.com/jedib0t/go-pretty/v6 v6.3.7
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/rickb777/date v1.19.1
-	github.com/stretchr/testify v1.7.0
-	github.com/urfave/cli/v2 v2.8.1
-	golang.org/x/time v0.0.0-20220609170525-579cf78fd858
+	github.com/rickb777/date v1.20.0
+	github.com/stretchr/testify v1.7.4
+	github.com/urfave/cli/v2 v2.11.2
+	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9
 	gopkg.in/h2non/gock.v1 v1.1.2
 )
 
@@ -25,22 +25,25 @@ require (
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rickb777/plural v1.4.1 // indirect
-	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/rivo/uniseg v0.3.4 // indirect
+	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	golang.org/x/sys v0.0.0-20220610221304-9f5ed59c137d // indirect
+	golang.org/x/sys v0.0.0-20220823224334-20c2bfdbfe24 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
 	github.com/cockroachdb/errors v1.9.0
-	github.com/gocarina/gocsv v0.0.0-20220531201732-5f969b02b902
+	github.com/fatih/color v1.13.0
+	github.com/gocarina/gocsv v0.0.0-20220823132111-71f3a5cb2654
 	github.com/segmentio/encoding v0.3.5
 )

@@ -27,6 +27,8 @@ type (
 		AirlinesClient
 		AircraftClient
 		PlacesClient
+
+		LastRequestID() (string, bool)
 	}
 
 	Gender string
@@ -49,10 +51,10 @@ type (
 		Changeable bool `json:"changeable,omitempty"`
 
 		// The conditions associated with this slice, describing the kinds of modifications you can make and any penalties that will apply to those modifications.
-		Conditions    Conditions `json:"conditions,omitempty"`
-		Duration      Duration   `json:"duration,omitempty"`
-		Segments      []Flight   `json:"segments,omitempty"`
-		FareBrandName string     `json:"fare_brand_name,omitempty"`
+		Conditions    SliceConditions `json:"conditions,omitempty"`
+		Duration      Duration        `json:"duration,omitempty"`
+		Segments      []Flight        `json:"segments,omitempty"`
+		FareBrandName string          `json:"fare_brand_name,omitempty"`
 	}
 
 	Flight struct {
@@ -68,8 +70,8 @@ type (
 		Distance                     Distance           `json:"distance,omitempty"`
 		DestinationTerminal          string             `json:"destination_terminal"`
 		Destination                  Location           `json:"destination"`
-		DepartingAt                  DateTime           `json:"departing_at"`
-		ArrivingAt                   DateTime           `json:"arriving_at"`
+		RawDepartingAt               string             `json:"departing_at"`
+		RawArrivingAt                string             `json:"arriving_at"`
 		Aircraft                     Aircraft           `json:"aircraft"`
 	}
 
@@ -95,9 +97,11 @@ type (
 	}
 
 	Airline struct {
-		Name     string `json:"name"`
-		IATACode string `json:"iata_code"`
-		ID       string `json:"id"`
+		Name          string `json:"name"`
+		IATACode      string `json:"iata_code"`
+		ID            string `json:"id"`
+		LogoSymbolURL string `json:"logo_symbol_url"`
+		LogoLockupURL string `json:"logo_lockup_url"`
 	}
 
 	Airport struct {
@@ -240,17 +244,19 @@ type (
 	}
 
 	client[Req any, Resp any] struct {
-		httpDoer  *http.Client
-		APIToken  string
-		options   *Options
-		limiter   *rate.Limiter
-		rateLimit *RateLimit
+		httpDoer      *http.Client
+		APIToken      string
+		options       *Options
+		limiter       *rate.Limiter
+		rateLimit     *RateLimit
+		afterResponse []func(resp *http.Response)
 	}
 
 	API struct {
-		httpDoer *http.Client
-		APIToken string
-		options  *Options
+		httpDoer      *http.Client
+		APIToken      string
+		options       *Options
+		lastRequestID string
 	}
 )
 
@@ -299,6 +305,10 @@ func New(apiToken string, opts ...Option) Duffel {
 		APIToken: apiToken,
 		options:  options,
 	}
+}
+
+func (a *API) LastRequestID() (string, bool) {
+	return a.lastRequestID, a.lastRequestID != ""
 }
 
 // Assert that our interface matches

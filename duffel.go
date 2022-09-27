@@ -72,7 +72,7 @@ type (
 		Destination                  Location           `json:"destination"`
 		RawDepartingAt               string             `json:"departing_at"`
 		RawArrivingAt                string             `json:"arriving_at"`
-		Aircraft                     Aircraft           `json:"aircraft"`
+		Aircraft                     *Aircraft          `json:"aircraft,omitempty"`
 	}
 
 	SegmentPassenger struct {

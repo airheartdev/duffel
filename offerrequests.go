@@ -14,7 +14,9 @@ import (
 type (
 	OfferRequestClient interface {
 		CreateOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error)
-		GetOfferRequest(ctx context.Context, id string) (*OfferRequest, error)
+	GetOfferRequest(ctx context.Context, id string) (*OfferRequest, error)
+		CreatePartialOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error)
+   GetPartialOfferRequest(ctx context.Context, requestInput PartialOfferRequestInput) (*OfferRequest, error) 
 		ListOfferRequests(ctx context.Context) *Iter[OfferRequest]
 	}
 
@@ -59,11 +61,29 @@ type (
 		CabinClass CabinClass              `json:"cabin_class"`
 		Offers     []Offer                 `json:"offers"`
 	}
+
+	PartialOfferRequestInput struct {
+		PartialOfferRequestID string
+	  SelectedPartialOffers []string
+	}
 )
 
 func (a *API) CreateOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error) {
 	return newRequestWithAPI[OfferRequestInput, OfferRequest](a).
 		Post("/air/offer_requests", &requestInput).
+		WithParams(requestInput).
+		Single(ctx)
+}
+
+func (a *API) CreatePartialOfferRequest(ctx context.Context, requestInput OfferRequestInput) (*OfferRequest, error) {
+	return newRequestWithAPI[OfferRequestInput, OfferRequest](a).
+		Post("/air/partial_offer_requests", &requestInput).
+		Single(ctx)
+}
+
+func (a *API) GetPartialOfferRequest(ctx context.Context, requestInput PartialOfferRequestInput) (*OfferRequest, error) {
+	return newRequestWithAPI[PartialOfferRequestInput, OfferRequest](a).
+		Getf("/air/partial_offer_requests/%s", requestInput.PartialOfferRequestID).
 		WithParams(requestInput).
 		Single(ctx)
 }
@@ -79,5 +99,10 @@ func (a *API) ListOfferRequests(ctx context.Context) *Iter[OfferRequest] {
 // Encode implements the ParamEncoder interface.
 func (o OfferRequestInput) Encode(q url.Values) error {
 	q.Set("return_offers", strconv.FormatBool(o.ReturnOffers))
+	return nil
+}
+
+func (o PartialOfferRequestInput) Encode(q url.Values) error {
+	q["selected_partial_offer"] = o.SelectedPartialOffers
 	return nil
 }

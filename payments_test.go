@@ -32,7 +32,7 @@ func TestCreatePayment(t *testing.T) {
 		ID:        "pay_00009hthhsUZ8W4LxQgkjo",
 		Currency:  "GBP",
 		LiveMode:  false,
-		CreatedAt: DateTime(time.Date(2020, 04, 11, 15, 48, 11, 642000000, time.UTC)),
+		CreatedAt: DateTime(time.Date(2020, 0o4, 11, 15, 48, 11, 642000000, time.UTC)),
 	}
 
 	ctx := context.TODO()
@@ -44,7 +44,8 @@ func TestCreatePayment(t *testing.T) {
 			Amount:   "30.20",
 			Currency: "GBP",
 			Type:     PaymentTypeBalance,
-		}})
+		},
+	})
 
 	a.NoError(err)
 	a.Equal(expected, payment)

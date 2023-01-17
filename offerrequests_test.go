@@ -97,7 +97,7 @@ func TestGetOfferRequest(t *testing.T) {
 
 	arr, err := data.Offers[0].Slices[0].Segments[0].ArrivingAt()
 	a.NoError(err)
-	a.True(arr.Equal(time.Date(2021, time.December, 30, 12, 07, 0, 0, est)), "Arrival time should be in EST")
+	a.True(arr.Equal(time.Date(2021, time.December, 30, 12, 0o7, 0, 0, est)), "Arrival time should be in EST")
 }
 
 func TestListOfferRequests(t *testing.T) {

@@ -66,6 +66,7 @@ type (
 		OperatingCarrier             Airline            `json:"operating_carrier"`
 		MarketingCarrierFlightNumber string             `json:"marketing_carrier_flight_number"`
 		MarketingCarrier             Airline            `json:"marketing_carrier"`
+		Stops                        []FlightStop       `json:"stops,omitempty"`
 		Duration                     Duration           `json:"duration"`
 		Distance                     Distance           `json:"distance,omitempty"`
 		DestinationTerminal          string             `json:"destination_terminal"`
@@ -73,6 +74,13 @@ type (
 		RawDepartingAt               string             `json:"departing_at"`
 		RawArrivingAt                string             `json:"arriving_at"`
 		Aircraft                     Aircraft           `json:"aircraft"`
+	}
+
+	FlightStop struct {
+		ID             string   `json:"id"`
+		Duration       Duration `json:"duration"`
+		RawDepartingAt string   `json:"departing_at"`
+		Airport        Airport  `json:"airport"`
 	}
 
 	SegmentPassenger struct {

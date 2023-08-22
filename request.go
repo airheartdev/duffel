@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"golang.org/x/time/rate"
@@ -21,7 +22,10 @@ func newInternalClient[Req any, Resp any](a *API) *client[Req, Resp] {
 		limiter:  rate.NewLimiter(rate.Every(1*time.Second), 5),
 		afterResponse: []func(resp *http.Response){
 			func(resp *http.Response) {
-				a.lastRequestID = resp.Header.Get(RequestIDHeader)
+				mu := new(sync.Mutex)
+				mu.Lock()
+				a.lastRequestID, a.lastResponse = resp.Header.Get(RequestIDHeader), resp
+				mu.Unlock()
 			},
 		},
 	}

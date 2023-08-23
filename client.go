@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -96,7 +97,22 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 		fmt.Printf("REQUEST:\n%s\n", string(b))
 	}
 
-	doFunc := func(c *client[R, T], req *http.Request) (*http.Response, error) {
+	do := func(c *client[R, T], req *http.Request, reuse bool) (*http.Response, error) {
+		if reuse {
+			// In a way when we use retry functionality we have to copy
+			// request and pass it to c.httpDoer.Do, but req.Clone() doesn't really deep clone Body
+			// and we have to clone body manually as in httputil.DumpRequestOut
+			//
+			// Issue https://github.com/golang/go/issues/36095
+			var b bytes.Buffer
+			b.ReadFrom(req.Body)
+			req.Body = ioutil.NopCloser(&b)
+
+			cloneReq := req.Clone(ctx)
+			cloneReq.Body = ioutil.NopCloser(bytes.NewReader(b.Bytes()))
+			req = cloneReq
+		}
+
 		resp, err := c.httpDoer.Do(req)
 		if err != nil {
 			return nil, err
@@ -117,14 +133,13 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 		return resp, nil
 	}
 
-	// Try to use backoff retry mechanism
 	if c.retry == nil {
 		// Do single request without using backoff retry mechanism
-		return doFunc(c, req)
+		return do(c, req, false)
 	}
 
 	for {
-		resp, err := doFunc(c, req)
+		resp, err := do(c, req, true)
 
 		var isMatchedCond bool
 		for _, cond := range c.options.Retry.Conditions {

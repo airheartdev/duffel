@@ -4,7 +4,10 @@
 
 package duffel
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 // WithAPIToken sets the API host to the default Duffel production host.
 func WithDefaultAPI() Option {
@@ -47,5 +50,27 @@ func WithHTTPClient(client *http.Client) Option {
 func WithDebug() Option {
 	return func(c *Options) {
 		c.Debug = true
+	}
+}
+
+// WithRetry enables backoff retrying mechanism. If f retry function isn't provided
+// ExponentalBackoff algorithm will be used. You should always use it in bound with WithRetryConditions options.
+func WithRetry(maxAttempts int, minWaitTime, maxWaitTime time.Duration, f RetryFunc) Option {
+	return func(c *Options) {
+		c.Retry.MaxAttempts = maxAttempts
+		c.Retry.MinWaitTime = minWaitTime
+		c.Retry.MaxWaitTime = maxWaitTime
+		if f == nil {
+			f = ExponentalBackoff // used as default
+		}
+		c.Retry.Fn = f
+	}
+}
+
+// WithRetryConditions appends retry condition. Retry functionality won't work
+// without at least 1 retry condition.
+func WithRetryCondition(condition RetryCond) Option {
+	return func(c *Options) {
+		c.Retry.Conditions = append(c.Retry.Conditions, condition)
 	}
 }

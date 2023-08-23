@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"sync"
 	"time"
 
 	"golang.org/x/time/rate"
@@ -22,12 +21,19 @@ func newInternalClient[Req any, Resp any](a *API) *client[Req, Resp] {
 		limiter:  rate.NewLimiter(rate.Every(1*time.Second), 5),
 		afterResponse: []func(resp *http.Response){
 			func(resp *http.Response) {
-				mu := new(sync.Mutex)
-				mu.Lock()
-				a.lastRequestID, a.lastResponse = resp.Header.Get(RequestIDHeader), resp
-				mu.Unlock()
+				if resp != nil {
+					a.lastRequestID, a.lastResponse = resp.Header.Get(RequestIDHeader), resp
+				}
 			},
 		},
+	}
+	if a.options.Retry.MaxAttempts != 0 {
+		client.retry = &backoff{
+			minWaitTime: a.options.Retry.MinWaitTime,
+			maxWaitTime: a.options.Retry.MaxWaitTime,
+			maxAttempts: int32(a.options.Retry.MaxAttempts),
+			f:           a.options.Retry.Fn,
+		}
 	}
 
 	return client
@@ -61,9 +67,9 @@ func (c *client[Req, Resp]) Do(ctx context.Context, resourceName string, method 
 	c.rateLimit = rateLimit
 	c.limiter.SetBurst(rateLimit.Limit)
 	c.limiter.SetLimit(rate.Every(rateLimit.Period))
-
 	if rateLimit.Remaining == 0 || resp.StatusCode == http.StatusTooManyRequests {
 		return nil, fmt.Errorf("rate limit exceeded, reset in: %s, current limit: %d", rateLimit.Period.String(), rateLimit.Limit)
 	}
+
 	return resp, nil
 }

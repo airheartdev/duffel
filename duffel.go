@@ -247,7 +247,16 @@ type (
 		Host      string
 		UserAgent string
 		HttpDoer  *http.Client
-		Debug     bool
+		Retry     struct {
+			MaxAttempts int
+			MinWaitTime time.Duration
+			MaxWaitTime time.Duration
+			// Conditions that will be applied on retry mechanism.
+			Conditions []RetryCond
+			// Retry function which describes backoff algorithm.
+			Fn RetryFunc
+		}
+		Debug bool
 	}
 
 	client[Req any, Resp any] struct {
@@ -256,6 +265,7 @@ type (
 		options       *Options
 		limiter       *rate.Limiter
 		rateLimit     *RateLimit
+		retry         *backoff
 		afterResponse []func(resp *http.Response)
 	}
 

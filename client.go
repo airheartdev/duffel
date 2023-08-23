@@ -14,6 +14,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/segmentio/encoding/json"
 )
@@ -95,25 +96,58 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 		fmt.Printf("REQUEST:\n%s\n", string(b))
 	}
 
-	resp, err := c.httpDoer.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if c.options.Debug {
-		b, err := httputil.DumpResponse(resp, true)
+	doFunc := func(c *client[R, T], req *http.Request) (*http.Response, error) {
+		resp, err := c.httpDoer.Do(req)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Printf("RESPONSE:\n%s\n", string(b))
+
+		if c.options.Debug {
+			b, err := httputil.DumpResponse(resp, true)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Printf("RESPONSE:\n%s\n", string(b))
+		}
+
+		if resp.StatusCode >= 400 {
+			err = decodeError(resp)
+			return nil, err
+		}
+		return resp, nil
 	}
 
-	if resp.StatusCode > 399 {
-		err = decodeError(resp)
-		return nil, err
+	// Try to use backoff retry mechanism
+	if c.retry == nil {
+		// Do single request without using backoff retry mechanism
+		return doFunc(c, req)
 	}
 
-	return resp, nil
+	for {
+		resp, err := doFunc(c, req)
+
+		var isMatchedCond bool
+		for _, cond := range c.options.Retry.Conditions {
+			if ok := cond(resp, err); ok {
+				isMatchedCond = true
+				break
+			}
+		}
+		if isMatchedCond {
+			// Get next duration internval, sleep and make another request
+			// till nextDuration != stopBackoff
+			nextDuration := c.retry.next()
+			if nextDuration == stopBackoff {
+				c.retry.reset()
+				return resp, err
+			}
+			time.Sleep(nextDuration)
+			continue
+		}
+
+		// Break retries mechanism if conditions weren't matched
+		return resp, err
+	}
 }
 
 func (c *client[R, T]) buildRequestURL(resourceName string) (*url.URL, error) {

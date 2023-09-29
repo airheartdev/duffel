@@ -66,6 +66,7 @@ type (
 		OperatingCarrier             Airline            `json:"operating_carrier"`
 		MarketingCarrierFlightNumber string             `json:"marketing_carrier_flight_number"`
 		MarketingCarrier             Airline            `json:"marketing_carrier"`
+		Stops                        []FlightStop       `json:"stops,omitempty"`
 		Duration                     Duration           `json:"duration"`
 		Distance                     Distance           `json:"distance,omitempty"`
 		DestinationTerminal          string             `json:"destination_terminal"`
@@ -73,6 +74,13 @@ type (
 		RawDepartingAt               string             `json:"departing_at"`
 		RawArrivingAt                string             `json:"arriving_at"`
 		Aircraft                     Aircraft           `json:"aircraft"`
+	}
+
+	FlightStop struct {
+		ID             string   `json:"id"`
+		Duration       Duration `json:"duration"`
+		RawDepartingAt string   `json:"departing_at"`
+		Airport        Airport  `json:"airport"`
 	}
 
 	SegmentPassenger struct {
@@ -237,7 +245,16 @@ type (
 		Host      string
 		UserAgent string
 		HttpDoer  *http.Client
-		Debug     bool
+		Retry     struct {
+			MaxAttempts int
+			MinWaitTime time.Duration
+			MaxWaitTime time.Duration
+			// Conditions that will be applied on retry mechanism.
+			Conditions []RetryCond
+			// Retry function which describes backoff algorithm.
+			Fn RetryFunc
+		}
+		Debug bool
 	}
 
 	client[Req any, Resp any] struct {
@@ -246,6 +263,7 @@ type (
 		options       *Options
 		limiter       *rate.Limiter
 		rateLimit     *RateLimit
+		retry         *backoff
 		afterResponse []func(resp *http.Response)
 	}
 

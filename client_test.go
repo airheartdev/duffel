@@ -6,7 +6,9 @@ package duffel
 
 import (
 	"context"
+	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/h2non/gock.v1"
@@ -52,6 +54,30 @@ func TestClientErrorBadGateway(t *testing.T) {
 	defer gock.Off()
 
 	client := New("duffel_test_123")
+	data, err := client.CreateOfferRequest(ctx, OfferRequestInput{
+		ReturnOffers: true,
+	})
+	a.Error(err)
+	a.Nil(data)
+	a.Equal("duffel: An internal server error occurred. Please try again later.", err.Error())
+}
+
+func TestClientRetry(t *testing.T) {
+	ctx := context.TODO()
+	a := assert.New(t)
+	gock.New("https://api.duffel.com/air/offer_requests").
+		Persist().
+		Reply(502).
+		AddHeader("Content-Type", "text/html").
+		File("fixtures/502-bad-gateway.html")
+	defer gock.Off()
+
+	client := New("duffel_test_123",
+		WithRetry(3, time.Second, time.Second*5, ExponentalBackoff),
+		WithRetryCondition(func(resp *http.Response, err error) bool {
+			return err != nil
+		}),
+	)
 	data, err := client.CreateOfferRequest(ctx, OfferRequestInput{
 		ReturnOffers: true,
 	})

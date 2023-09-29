@@ -10,10 +10,12 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/segmentio/encoding/json"
 )
@@ -95,25 +97,72 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 		fmt.Printf("REQUEST:\n%s\n", string(b))
 	}
 
-	resp, err := c.httpDoer.Do(req)
-	if err != nil {
-		return nil, err
-	}
+	do := func(c *client[R, T], req *http.Request, reuse bool) (*http.Response, error) {
+		if reuse && req.Body != nil {
+			// In a way when we use retry functionality we have to copy
+			// request and pass it to c.httpDoer.Do, but req.Clone() doesn't really deep clone Body
+			// and we have to clone body manually as in httputil.DumpRequestOut
+			//
+			// Issue https://github.com/golang/go/issues/36095
+			var b bytes.Buffer
+			b.ReadFrom(req.Body)
+			req.Body = ioutil.NopCloser(&b)
 
-	if c.options.Debug {
-		b, err := httputil.DumpResponse(resp, true)
+			cloneReq := req.Clone(ctx)
+			cloneReq.Body = ioutil.NopCloser(bytes.NewReader(b.Bytes()))
+			req = cloneReq
+		}
+
+		resp, err := c.httpDoer.Do(req)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Printf("RESPONSE:\n%s\n", string(b))
+
+		if c.options.Debug {
+			b, err := httputil.DumpResponse(resp, true)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Printf("RESPONSE:\n%s\n", string(b))
+		}
+
+		if resp.StatusCode >= 400 {
+			err = decodeError(resp)
+			return nil, err
+		}
+		return resp, nil
 	}
 
-	if resp.StatusCode > 399 {
-		err = decodeError(resp)
-		return nil, err
+	if c.retry == nil {
+		// Do single request without using backoff retry mechanism
+		return do(c, req, false)
 	}
 
-	return resp, nil
+	for {
+		resp, err := do(c, req, true)
+
+		var isMatchedCond bool
+		for _, cond := range c.options.Retry.Conditions {
+			if ok := cond(resp, err); ok {
+				isMatchedCond = true
+				break
+			}
+		}
+		if isMatchedCond {
+			// Get next duration internval, sleep and make another request
+			// till nextDuration != stopBackoff
+			nextDuration := c.retry.next()
+			if nextDuration == stopBackoff {
+				c.retry.reset()
+				return resp, err
+			}
+			time.Sleep(nextDuration)
+			continue
+		}
+
+		// Break retries mechanism if conditions weren't matched
+		return resp, err
+	}
 }
 
 func (c *client[R, T]) buildRequestURL(resourceName string) (*url.URL, error) {

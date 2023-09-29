@@ -22,7 +22,7 @@ func newInternalClient[Req any, Resp any](a *API) *client[Req, Resp] {
 		afterResponse: []func(resp *http.Response){
 			func(resp *http.Response) {
 				if resp != nil {
-					a.lastRequestID, a.lastResponse = resp.Header.Get(RequestIDHeader), resp
+					a.lastRequestID = resp.Header.Get(RequestIDHeader)
 				}
 			},
 		},

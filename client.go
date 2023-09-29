@@ -98,7 +98,7 @@ func (c *client[R, T]) makeRequest(ctx context.Context, resourceName string, met
 	}
 
 	do := func(c *client[R, T], req *http.Request, reuse bool) (*http.Response, error) {
-		if reuse {
+		if reuse && req.Body != nil {
 			// In a way when we use retry functionality we have to copy
 			// request and pass it to c.httpDoer.Do, but req.Clone() doesn't really deep clone Body
 			// and we have to clone body manually as in httputil.DumpRequestOut

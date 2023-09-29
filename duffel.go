@@ -29,8 +29,6 @@ type (
 		PlacesClient
 
 		LastRequestID() (string, bool)
-		LastResponse() *http.Response
-		GetClient() *http.Client
 	}
 
 	Gender string
@@ -274,7 +272,6 @@ type (
 		APIToken      string
 		options       *Options
 		lastRequestID string
-		lastResponse  *http.Response
 	}
 )
 
@@ -327,14 +324,6 @@ func New(apiToken string, opts ...Option) Duffel {
 
 func (a *API) LastRequestID() (string, bool) {
 	return a.lastRequestID, a.lastRequestID != ""
-}
-
-func (a *API) LastResponse() *http.Response {
-	return a.lastResponse
-}
-
-func (a *API) GetClient() *http.Client {
-	return a.httpDoer
 }
 
 // Assert that our interface matches
